@@ -1,6 +1,6 @@
 <?php
 // Login page: no login check here.
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('audit');
 
 // Session cookie: HTTPS only, not readable by JavaScript, not sent on cross-site requests
@@ -20,6 +20,8 @@ $login_db_conn = lum_db_mysqli_users(true);
 $error = "";
 $max_attempts = 5;
 $lockout_time_minutes = 15;
+const LUM_LOGIN_ATTEMPT_RETENTION_HOURS = 24; // Keep rows long enough to outlast the 15-minute lockout window
+$logo_url = LUM_APP_URL . '/Additions/Style-Login/LUM-login-logo.png';
 
 // CSRF token for the login form (a login submitted from another site is refused)
 if (empty($_SESSION['login_csrf'])) {
@@ -40,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['login_csrf'] = bin2hex(random_bytes(32));
         $error = "Your session has expired. Please try again.";
     } else {
+        cleanup_login_attempts($login_db_conn);
         // Brute force lockout per IP address
         $check_attempts = $login_db_conn->prepare("SELECT attempts, last_attempt FROM lum_login_attempts WHERE ip_address = ?");
         $check_attempts->bind_param("s", $ip_address);
@@ -117,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $update_login->execute();
                         login_audit('LOGIN', $row['user_id'], $row['user_name'], $row['user_role']);
 
-                        header("Location: https://lynx-um.co.za/index.php");
+                        header('Location: ' . LUM_APP_URL . '/index.php');
                         exit();
                     }
                 } else {
@@ -135,6 +138,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
+}
+
+// Remove stale IP lockout rows without interrupting the current login request
+function cleanup_login_attempts($conn) {
+    $cutoff = date('Y-m-d H:i:s', time() - (LUM_LOGIN_ATTEMPT_RETENTION_HOURS * 3600));
+    $stmt = $conn->prepare("DELETE FROM lum_login_attempts WHERE last_attempt < ?");
+    if (!$stmt) {
+        error_log('LUM login cleanup prepare failed: ' . $conn->error);
+        return;
+    }
+    $stmt->bind_param("s", $cutoff);
+    if (!$stmt->execute()) {
+        error_log('LUM login cleanup failed: ' . $stmt->error);
+    }
+    $stmt->close();
 }
 
 // Count a failed attempt for an IP address; returns the number of attempts so far
@@ -185,7 +203,7 @@ function login_audit($action, $user_id, $user_name, $role = null, $note = null) 
             <div class="card login-container p-4">
                 
                 <div class="text-center mb-4">
-                    <img src="https://lynx-um.co.za/Additions/Style-Login/LUM-login-logo.png" alt="Lynx Utilities Logo" class="logo-img">
+                    <img src="<?php echo htmlspecialchars($logo_url, ENT_QUOTES, 'UTF-8'); ?>" alt="Lynx Utilities Logo" class="logo-img">
                 </div>
 
                 <?php if(!empty($error)): ?>
@@ -195,11 +213,11 @@ function login_audit($action, $user_id, $user_name, $role = null, $note = null) 
                 <?php endif; ?>
 
                 <form action="" method="POST">
-                    <input type="hidden" name="login_csrf" value="<?php echo htmlspecialchars($_SESSION['login_csrf'] ?? ''); ?>">
+                    <input type="hidden" name="login_csrf" value="<?php echo htmlspecialchars($_SESSION['login_csrf'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mx-auto" style="width: 80%;">
                         <div class="mb-3">
                             <label for="user_name" class="form-label text-light">Username or Email</label>
-                            <input type="text" class="form-control" id="user_name" name="user_name" required autocomplete="username" value="<?php echo isset($_POST['user_name']) ? htmlspecialchars($_POST['user_name']) : ''; ?>">
+                            <input type="text" class="form-control" id="user_name" name="user_name" required autocomplete="username" value="<?php echo isset($_POST['user_name']) ? htmlspecialchars($_POST['user_name'], ENT_QUOTES, 'UTF-8') : ''; ?>">
                         </div>
                         
                         <div class="mb-4">
