@@ -24,6 +24,7 @@ $lum_url_default = 'https://lynx-um.co.za';
 $lum_url_value = ($lum_url_env !== false && trim((string)$lum_url_env) !== '') ? trim((string)$lum_url_env) : $lum_url_default;
 $lum_url_value = rtrim($lum_url_value, '/');
 if ($lum_url_value === '') $lum_url_value = $lum_url_default;
+if (!preg_match('#^https?://#i', $lum_url_value) || filter_var($lum_url_value, FILTER_VALIDATE_URL) === false) $lum_url_value = $lum_url_default;
 define('LUM_APP_URL', $lum_url_value);
 
 $lum_db_cfg_env = getenv('LUM_DB_CONFIG');
@@ -90,15 +91,42 @@ function lum_db_config() {
 function lum_resolve_path($relative_path) {
     $relative = ltrim(str_replace('\\', '/', (string)$relative_path), '/');
     if ($relative === '') return LUM_ROOT;
+    $relative = preg_replace('#/+#', '/', $relative);
+    $segments = [];
+    foreach (explode('/', $relative) as $segment) {
+        if ($segment === '' || $segment === '.') continue;
+        if ($segment === '..') {
+            error_log('LUM: refused path traversal in lum_resolve_path(' . $relative_path . ')');
+            return null;
+        }
+        $segments[] = $segment;
+    }
+    $relative = implode('/', $segments);
+    if ($relative === '') return LUM_ROOT;
+    $root_real = realpath(LUM_ROOT);
+    $self_real = realpath(__DIR__);
+    $allowed_roots = [];
+    if ($root_real !== false) $allowed_roots[] = rtrim(str_replace('\\', '/', $root_real), '/');
+    if ($self_real !== false) $allowed_roots[] = rtrim(str_replace('\\', '/', $self_real), '/');
     $candidates = [
         rtrim(LUM_ROOT, '/') . '/' . $relative,
         __DIR__ . '/' . $relative,
-        __DIR__ . '/' . basename($relative),
     ];
     foreach ($candidates as $candidate) {
-        if (is_readable($candidate)) return $candidate;
+        $real = realpath($candidate);
+        if ($real === false) continue;
+        $real = str_replace('\\', '/', $real);
+        foreach ($allowed_roots as $allowed_root) {
+            $real_cmp = $real;
+            $allowed_cmp = $allowed_root;
+            if (PHP_OS_FAMILY === 'Windows') {
+                $real_cmp = strtolower($real_cmp);
+                $allowed_cmp = strtolower($allowed_cmp);
+            }
+            if ($real_cmp === $allowed_cmp || strpos($real_cmp, $allowed_cmp . '/') === 0) return $real;
+        }
     }
-    return $candidates[0];
+    return null;
 }
 
 // PDO connection by short name (LUM_DATABASES) or MySQL database name, reused for the request.
@@ -181,7 +209,7 @@ function lum_use(...$names) {
             continue;
         }
         $file = lum_resolve_path(LUM_LIBRARIES[$name]);
-        if (!is_readable($file)) {
+        if (!$file || !is_readable($file)) {
             error_log('LUM: library not found: ' . $file);
             $ok = false;
             if ($name === 'audit') lum_audit_stubs();
@@ -227,7 +255,9 @@ function lum_audit_stubs() {
 
 // Login and page access for web pages; command-line (cron) scripts are not checked
 function lum_page($page_key = null, $level = 'view') {
-    require_once lum_resolve_path('/Sec/auth-guard.php');
+    $auth_guard = lum_resolve_path('/Sec/auth-guard.php');
+    if (!$auth_guard || !is_readable($auth_guard)) lum_db_fail('Critical Error: Authentication module not available.');
+    require_once $auth_guard;
     if (PHP_SAPI === 'cli') return;
     // auth-guard.php is loaded inside this function, so its page variables must be set globally
     $GLOBALS['csrf_token'] = lum_csrf_token();

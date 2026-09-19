@@ -10,8 +10,7 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
-require_once __DIR__ . '/bootstrap.php';
-lum_connect('tenants');
+require_once __DIR__ . '/db-conn-tenants.php';
 
 // Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {

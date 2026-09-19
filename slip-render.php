@@ -1404,10 +1404,8 @@ if (!empty($property_settings['charges_refuse']) && $is_plett_tariff && $refuse_
 // Back billing and adjustments billed in this month (approved or posted)
 $slip_adjustments = [];
 $slip_adjustments_total = 0.0;
-$lum_back_billing_file = function_exists('lum_resolve_path')
-    ? lum_resolve_path('/Reporting/back-billing-engine.php')
-    : (__DIR__ . '/back-billing-engine.php');
-if (is_readable($lum_back_billing_file)) {
+$lum_back_billing_file = lum_resolve_path('/Reporting/back-billing-engine.php');
+if ($lum_back_billing_file && is_readable($lum_back_billing_file)) {
     require_once($lum_back_billing_file);
     if (function_exists('lumAdjApprovedForTenant')) {
         $slip_adjustments = lumAdjApprovedForTenant(lumJournalDb(), $property_name, $tenant['tenant_id'] ?? 0,
