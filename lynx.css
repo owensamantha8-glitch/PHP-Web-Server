@@ -1,0 +1,23 @@
+/* Lynx Utility Management - the look shared by every screen.
+   A screen keeps only the rules that are its own. */
+
+::-webkit-scrollbar { width: 14px; height: 14px; }
+::-webkit-scrollbar-thumb:hover { background: #e3000f; }
+.btn { border-radius: 4px !important; }
+.btn-outline-lynx:hover { background-color: #e3000f; border-color: #e3000f; color: #ffffff; }
+.lynx-brand-hover:hover { color: #e3000f !important; }
+.lynx-logout { color: #e3000f; }
+.lynx-logout:hover { color: #bf000c; }
+.muted { color: #888; }
+.page-wrapper { height: calc(100vh - 46px); overflow-y: auto; overflow-x: hidden; }
+.search-btn { background-color: #1e1e1e; border: 1px solid #444; color: #b0b0b0; }
+.search-btn:hover { background-color: #333; color: #fff; }
+.search-input:focus { border-color: #e3000f !important; box-shadow: 0 0 0 0.25rem rgba(227, 0, 15, 0.25) !important; }
+.transition-all { transition: all 0.3s ease; }
+:root { --bs-black: #000000; }
+input[type=number] { -moz-appearance: textfield; }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+/* The house button, so every screen has it even without its own style block */
+.btn-brand { background-color: #e3000f; color: #ffffff; border: none; }
+.btn-brand:hover, .btn-brand:focus { background-color: #bf000c; color: #ffffff; }
+.btn-brand:hover { transform: none; }
