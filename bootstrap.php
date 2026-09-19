@@ -10,8 +10,29 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 if (defined('LUM_BOOTSTRAP')) return;
 define('LUM_BOOTSTRAP', true);
 
-define('LUM_ROOT', '/var/www/Lynx');
-define('LUM_DB_CONFIG', '/var/secure_configs/lynx_db.ini');   // Outside the web root
+$__lum_app_root = getenv('LUM_APP_ROOT');
+if ($__lum_app_root === false || $__lum_app_root === '') $__lum_app_root = '/var/www/Lynx';
+$__lum_app_root = trim($__lum_app_root);
+if ($__lum_app_root === '') $__lum_app_root = '/var/www/Lynx';
+$__lum_app_root = rtrim($__lum_app_root, '/');
+if ($__lum_app_root === '') $__lum_app_root = '/';
+
+$__lum_app_url = getenv('LUM_APP_URL');
+if ($__lum_app_url === false || $__lum_app_url === '') $__lum_app_url = 'https://lynx-um.co.za';
+$__lum_app_url = trim($__lum_app_url);
+if ($__lum_app_url === '') $__lum_app_url = 'https://lynx-um.co.za';
+$__lum_app_url = rtrim($__lum_app_url, '/');
+
+$__lum_db_config = getenv('LUM_DB_CONFIG');
+if ($__lum_db_config === false || $__lum_db_config === '') $__lum_db_config = '/var/secure_configs/lynx_db.ini'; // Outside the web root
+$__lum_db_config = trim($__lum_db_config);
+if ($__lum_db_config === '') $__lum_db_config = '/var/secure_configs/lynx_db.ini'; // Outside the web root
+
+define('LUM_APP_ROOT', $__lum_app_root);
+define('LUM_ROOT', LUM_APP_ROOT); // Backwards compatibility for existing includes
+define('LUM_APP_URL', $__lum_app_url);
+define('LUM_DB_CONFIG', $__lum_db_config);
+unset($__lum_app_root, $__lum_app_url, $__lum_db_config);
 
 // Short database names => MySQL databases ('' = server level, for the yearly OBIS databases)
 const LUM_DATABASES = [

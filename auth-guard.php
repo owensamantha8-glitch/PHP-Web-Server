@@ -19,10 +19,11 @@ if (defined('LUM_AUTH_GUARD')) return;
 define('LUM_AUTH_GUARD', true);
 
 // Shared settings, database connections and engines (lum_db(), lum_use(), lum_connect(), lum_page())
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // ---------------- SETTINGS ----------------
-const LUM_LOGIN_URL          = 'https://lynx-um.co.za/Sec/login.php';
+const LUM_LOGIN_URL          = LUM_APP_URL . '/Sec/login.php';
+const LUM_DASHBOARD_URL      = LUM_APP_URL . '/index.php';
 const LUM_IDLE_TIMEOUT       = 3600;  // Log out after 60 minutes without activity (0 = off)
 const LUM_USER_REFRESH       = 300;   // Re-check the user in the database every 5 minutes
 const LUM_ALLOW_UNLISTED     = false; // Pages/levels without a rule are refused
@@ -91,7 +92,7 @@ function lum_deny($message = 'You do not have access to this page.') {
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Access Denied</title></head>"
        . "<body style='background:#121212; color:#fff; font-family:Segoe UI, sans-serif; padding:40px;'>"
        . "<h3 style='color:#e3000f;'>Access Denied</h3><p>" . htmlspecialchars($message) . "</p>"
-       . "<p><a href='https://lynx-um.co.za/index.php' style='color:#0dcaf0;'>Return to the dashboard</a></p></body></html>";
+       . "<p><a href='" . htmlspecialchars(LUM_DASHBOARD_URL, ENT_QUOTES, 'UTF-8') . "' style='color:#0dcaf0;'>Return to the dashboard</a></p></body></html>";
     exit();
 }
 
@@ -186,8 +187,8 @@ function lum_can($page_key, $level = 'view') {
 function lum_require_access($page_key, $level = 'view') {
     if (lum_can($page_key, $level)) return;
 
-    if (LUM_AUDIT_DENIED && is_readable('/var/www/Lynx/Audit/audit-logger.php')) {
-        require_once('/var/www/Lynx/Audit/audit-logger.php');
+    if (LUM_AUDIT_DENIED && is_readable(LUM_ROOT . '/Audit/audit-logger.php')) {
+        require_once(LUM_ROOT . '/Audit/audit-logger.php');
         if (function_exists('lum_audit_log')) {
             lum_audit_log('DENIED', 'page_access', 0, $page_key . ' (' . $level . ')', null, null,
                 ['page' => $page_key, 'level' => $level, 'url' => (string)($_SERVER['REQUEST_URI'] ?? '')]);
