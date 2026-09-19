@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('configs', 'view');
 // Start Output Buffering to prevent header conflicts with the embedded Universal Import script
 ob_start();
@@ -682,7 +682,15 @@ include LUM_ROOT . '/Layout/sub-navbar.php';
         
         <div class="collapse" id="importCollapse">
             <div class="mb-5 mt-3 border">
-                <?php include("/var/www/Lynx/Import/universal-import.php"); ?>
+                <?php
+                $lum_import_file = lum_resolve_path('/Import/universal-import.php');
+                if (!$lum_import_file) $lum_import_file = lum_resolve_path('/universal-import.php');
+                if ($lum_import_file && is_readable($lum_import_file)) {
+                    include $lum_import_file;
+                } else {
+                    echo '<div class="alert alert-warning m-3">Import module is not available on this deployment.</div>';
+                }
+                ?>
             </div>
         </div>
         <?php endif; ?>

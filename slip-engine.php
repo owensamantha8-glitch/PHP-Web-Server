@@ -3,7 +3,8 @@
 if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) { http_response_code(403); exit('Forbidden'); }
 // Shared consumption slip engine: single slips, bulk slips and the financial report. Load with require_once.
 
-require_once("/var/www/Lynx/Reporting/reporting-engine.php");
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/reporting-engine.php';
 
 if (!defined('LUM_SLIP_DIR')) {
     define('LUM_SLIP_DIR', '/var/www/Lynx/Tenant Management/Tenant Consumption Slips');
@@ -13,25 +14,7 @@ if (!defined('LUM_SLIP_DIR')) {
 
 // Shared database connection: lum_db() from bootstrap.php, otherwise its own connection from the secure config
 function lumDbConn($db_name) {
-    if (function_exists('lum_db')) return lum_db($db_name);
-    static $conns = [];
-    if (array_key_exists($db_name, $conns)) return $conns[$db_name];
-    $conns[$db_name] = null;
-
-    $config = @parse_ini_file('/var/secure_configs/lynx_db.ini');
-    if ($config === false || empty($config['host']) || !isset($config['username'], $config['password'])) {
-        error_log('LUM slip engine: unable to read /var/secure_configs/lynx_db.ini');
-        return null;
-    }
-
-    try {
-        $pdo = new PDO("mysql:host={$config['host']};dbname={$db_name};charset=utf8mb4", $config['username'], $config['password']);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $conns[$db_name] = $pdo;
-    } catch (\Throwable $e) {
-        error_log("LUM slip engine: could not connect to {$db_name}: " . $e->getMessage());
-    }
-    return $conns[$db_name];
+    return function_exists('lum_db') ? lum_db($db_name) : null;
 }
 
 // Property billing settings (sys_db_properties.lum_properties, edited under Billing Settings).

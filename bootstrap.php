@@ -10,8 +10,26 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 if (defined('LUM_BOOTSTRAP')) return;
 define('LUM_BOOTSTRAP', true);
 
-define('LUM_ROOT', '/var/www/Lynx');
-define('LUM_DB_CONFIG', '/var/secure_configs/lynx_db.ini');   // Outside the web root
+$lum_root_env = getenv('LUM_APP_ROOT');
+if ($lum_root_env === false || trim($lum_root_env) === '') $lum_root_env = getenv('LUM_ROOT'); // Backwards-compatible alias
+$lum_root_fallback = __DIR__;
+$lum_root_value = ($lum_root_env !== false && trim((string)$lum_root_env) !== '') ? trim((string)$lum_root_env) : $lum_root_fallback;
+$lum_root_real = realpath($lum_root_value);
+if ($lum_root_real !== false) $lum_root_value = $lum_root_real;
+define('LUM_APP_ROOT', rtrim(str_replace('\\', '/', $lum_root_value), '/'));
+if (!defined('LUM_ROOT')) define('LUM_ROOT', LUM_APP_ROOT); // Backwards-compatible alias
+
+$lum_url_env = getenv('LUM_APP_URL');
+$lum_url_default = 'https://lynx-um.co.za';
+$lum_url_value = ($lum_url_env !== false && trim((string)$lum_url_env) !== '') ? trim((string)$lum_url_env) : $lum_url_default;
+$lum_url_value = rtrim($lum_url_value, '/');
+if ($lum_url_value === '') $lum_url_value = $lum_url_default;
+if (!preg_match('#^https?://#i', $lum_url_value) || filter_var($lum_url_value, FILTER_VALIDATE_URL) === false) $lum_url_value = $lum_url_default;
+define('LUM_APP_URL', $lum_url_value);
+
+$lum_db_cfg_env = getenv('LUM_DB_CONFIG');
+$lum_db_cfg_default = '/var/secure_configs/lynx_db.ini'; // Outside the web root
+define('LUM_DB_CONFIG', ($lum_db_cfg_env !== false && trim((string)$lum_db_cfg_env) !== '') ? trim((string)$lum_db_cfg_env) : $lum_db_cfg_default);
 
 // Short database names => MySQL databases ('' = server level, for the yearly OBIS databases)
 const LUM_DATABASES = [
@@ -67,6 +85,48 @@ function lum_db_config() {
         }
     }
     return $cfg;
+}
+
+// Resolve an app file path against the configured app root, then local fallbacks.
+function lum_resolve_path($relative_path) {
+    $relative = ltrim(str_replace('\\', '/', (string)$relative_path), '/');
+    if ($relative === '') return LUM_ROOT;
+    $relative = preg_replace('#/+#', '/', $relative);
+    $segments = [];
+    foreach (explode('/', $relative) as $segment) {
+        if ($segment === '' || $segment === '.') continue;
+        if ($segment === '..') {
+            error_log('LUM: refused path traversal in lum_resolve_path(' . $relative_path . ')');
+            return null;
+        }
+        $segments[] = $segment;
+    }
+    $relative = implode('/', $segments);
+    if ($relative === '') return LUM_ROOT;
+    $root_real = realpath(LUM_ROOT);
+    $self_real = realpath(__DIR__);
+    $allowed_roots = [];
+    if ($root_real !== false) $allowed_roots[] = rtrim(str_replace('\\', '/', $root_real), '/');
+    if ($self_real !== false) $allowed_roots[] = rtrim(str_replace('\\', '/', $self_real), '/');
+    $candidates = [
+        rtrim(LUM_ROOT, '/') . '/' . $relative,
+        __DIR__ . '/' . $relative,
+    ];
+    foreach ($candidates as $candidate) {
+        $real = realpath($candidate);
+        if ($real === false) continue;
+        $real = str_replace('\\', '/', $real);
+        foreach ($allowed_roots as $allowed_root) {
+            $real_cmp = $real;
+            $allowed_cmp = $allowed_root;
+            if (PHP_OS_FAMILY === 'Windows') {
+                $real_cmp = strtolower($real_cmp);
+                $allowed_cmp = strtolower($allowed_cmp);
+            }
+            if ($real_cmp === $allowed_cmp || strpos($real_cmp, $allowed_cmp . '/') === 0) return $real;
+        }
+    }
+    return null;
 }
 
 // PDO connection by short name (LUM_DATABASES) or MySQL database name, reused for the request.
@@ -148,8 +208,8 @@ function lum_use(...$names) {
             $ok = false;
             continue;
         }
-        $file = LUM_ROOT . LUM_LIBRARIES[$name];
-        if (!is_readable($file)) {
+        $file = lum_resolve_path(LUM_LIBRARIES[$name]);
+        if (!$file || !is_readable($file)) {
             error_log('LUM: library not found: ' . $file);
             $ok = false;
             if ($name === 'audit') lum_audit_stubs();
@@ -195,7 +255,9 @@ function lum_audit_stubs() {
 
 // Login and page access for web pages; command-line (cron) scripts are not checked
 function lum_page($page_key = null, $level = 'view') {
-    require_once LUM_ROOT . '/Sec/auth-guard.php';
+    $auth_guard = lum_resolve_path('/Sec/auth-guard.php');
+    if (!$auth_guard || !is_readable($auth_guard)) lum_db_fail('Critical Error: Authentication module not available.');
+    require_once $auth_guard;
     if (PHP_SAPI === 'cli') return;
     // auth-guard.php is loaded inside this function, so its page variables must be set globally
     $GLOBALS['csrf_token'] = lum_csrf_token();

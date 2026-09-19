@@ -1,7 +1,7 @@
 <?php
 // Electricity and water usage of a property over two periods, side by side.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'view');
 lum_use('meters');
 ini_set('pcre.jit', '0');

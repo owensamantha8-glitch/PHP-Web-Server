@@ -20,7 +20,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 // Shared settings, connections and engines (see /var/www/Lynx/bootstrap.php; no login check from the command line)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 ini_set('memory_limit', '2048M');
 set_time_limit(3600);
 

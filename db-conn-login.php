@@ -6,7 +6,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 // The connection itself is made by lum_db() in /var/www/Lynx/bootstrap.php
 // (lum_db_mysqli_users(), opened once per page). New PDO code can call lum_db('users').
 // =========================================================================
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Kept for older pages that read these after including this file
 $config = lum_db_config();

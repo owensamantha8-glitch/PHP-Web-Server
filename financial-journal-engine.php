@@ -12,6 +12,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 
 if (!defined('LUM_JOURNAL_ENGINE')) {
     define('LUM_JOURNAL_ENGINE', true);
+    require_once __DIR__ . '/bootstrap.php';
 
     // Money columns (R) and quantity columns stored for every tenant line
     // (define() is used because 'const' is not allowed inside this if-block)
@@ -35,31 +36,13 @@ if (!defined('LUM_JOURNAL_ENGINE')) {
 
     // Connection to sys_db_financial_journal (shared through lum_db() in /var/www/Lynx/bootstrap.php)
     function lumJournalDb() {
-        if (function_exists('lum_db')) {
-            $jpdo = lum_db('journal');
-            if (!$jpdo) {
-                static $jlogged = false;
-                if (!$jlogged) error_log('LUM journal: connection failed (has financial-journal-setup.sql been run?)');
-                $jlogged = true;
-            }
-            return $jpdo;
+        $jpdo = function_exists('lum_db') ? lum_db('journal') : null;
+        if (!$jpdo) {
+            static $jlogged = false;
+            if (!$jlogged) error_log('LUM journal: connection failed (has financial-journal-setup.sql been run?)');
+            $jlogged = true;
         }
-        static $pdo = false;
-        if ($pdo !== false) return $pdo;
-        $pdo = null;
-        $cfg = @parse_ini_file('/var/secure_configs/lynx_db.ini');
-        if ($cfg === false) {
-            error_log('LUM journal: unable to read /var/secure_configs/lynx_db.ini');
-            return null;
-        }
-        try {
-            $pdo = new PDO("mysql:host={$cfg['host']};dbname=sys_db_financial_journal;charset=utf8mb4", $cfg['username'], $cfg['password']);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (\Throwable $e) {
-            error_log('LUM journal: connection failed (has financial-journal-setup.sql been run?): ' . $e->getMessage());
-            $pdo = null;
-        }
-        return $pdo;
+        return $jpdo;
     }
 
     // The active journal for a property and billing month (or null)

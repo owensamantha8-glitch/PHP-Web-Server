@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('consumption_slips', 'view');
 
 lum_connect('obis');

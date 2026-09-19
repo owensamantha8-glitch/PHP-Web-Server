@@ -3,6 +3,7 @@
 if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) { http_response_code(403); exit('Forbidden'); }
 // Shared helpers used across the reporting
 // Part of reporting-engine.php; include that, never this file.
+require_once __DIR__ . '/bootstrap.php';
 
 // Easter Sunday (Gregorian calendar) - does not need the PHP calendar extension
 function lumEasterSunday($year) {
@@ -175,20 +176,7 @@ function lumCompanyContactNoteHtml($document, $settings = null) {
 // PDO for one of the system databases (cached, null when unavailable).
 // Uses lum_db() from /var/www/Lynx/bootstrap.php, so pages and the engines share one connection per database.
 function lumSysDb($database) {
-    if (function_exists('lum_db')) return lum_db((string)$database);
-    static $conns = [];
-    if (array_key_exists($database, $conns)) return $conns[$database];
-    $conns[$database] = null;
-    $cfg = @parse_ini_file('/var/secure_configs/lynx_db.ini');
-    if ($cfg === false || !preg_match('/^[A-Za-z0-9_]+$/', (string)$database)) return null;
-    try {
-        $pdo = new PDO("mysql:host={$cfg['host']};dbname={$database};charset=utf8mb4", $cfg['username'], $cfg['password']);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $conns[$database] = $pdo;
-    } catch (\Throwable $e) {
-        error_log('LUM: database ' . $database . ' not available: ' . $e->getMessage());
-    }
-    return $conns[$database];
+    return function_exists('lum_db') ? lum_db((string)$database) : null;
 }
 
 // Dashboard settings of a property ('All' = the combined view)

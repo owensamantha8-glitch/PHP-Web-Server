@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
-include("/var/www/Lynx/DB Connections/db-conn-tenants.php");
+require_once __DIR__ . '/db-conn-tenants.php';
 
 // Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {

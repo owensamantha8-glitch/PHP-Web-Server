@@ -1,6 +1,6 @@
 <?php
     // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-    require_once '/var/www/Lynx/bootstrap.php';
+    require_once __DIR__ . '/bootstrap.php';
     lum_page('meters', 'edit');
 
     lum_connect('meters'); // $meter_db_conn, $meter_crud

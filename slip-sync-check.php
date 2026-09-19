@@ -4,7 +4,7 @@
 // slip does it, once the way the bulk export does it - and compares the totals. For a
 // tenant set to separate slips it also checks the two parts add up to the whole.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('consumption_slips', 'view');
 ini_set('pcre.jit', '0');
 set_time_limit(600);

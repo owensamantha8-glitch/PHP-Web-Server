@@ -2,7 +2,7 @@
 // Two financial reports beside each other: the same property on two billing cycles,
 // or two properties, with the difference per tenant.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('financial_reports', 'view');
 ini_set('pcre.jit', '0');
 set_time_limit(900);

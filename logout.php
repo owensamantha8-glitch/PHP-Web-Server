@@ -1,6 +1,6 @@
 <?php
 // Logout: records the sign-out, ends the session and returns to the login page.
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('audit');
 
 if (session_status() === PHP_SESSION_NONE) {
