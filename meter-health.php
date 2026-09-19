@@ -2,7 +2,7 @@
 // Meter communication and reading coverage: which meters went quiet, when they went quiet
 // together (one fault, not many), and how complete the readings are for a billing period.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'view');
 ini_set('pcre.jit', '0');
 

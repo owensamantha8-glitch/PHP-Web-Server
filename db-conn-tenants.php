@@ -6,7 +6,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 // The connection itself is made by lum_db() in /var/www/Lynx/bootstrap.php
 // (opened once per page and shared). New code can call lum_db('tenants') directly.
 // =========================================================================
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Kept for older pages that read these after including this file
 $config = lum_db_config();
@@ -17,5 +17,5 @@ $host = $config['host'];
 
 $tenant_db_conn = lum_db('tenants', true);
 
-require_once "/var/www/Lynx/Tenant Management/Tenant Control/tenant-conr.php";
+lum_use('tenants');
 $tenant_crud = new tenant_conr($tenant_db_conn);

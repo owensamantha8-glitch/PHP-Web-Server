@@ -9,7 +9,7 @@
 // without the session. Reports are size-limited and limited per address.
 // =========================================================================
 
-require_once '/var/www/Lynx/bootstrap.php'; // Shared settings only (errors are logged, never displayed)
+require_once __DIR__ . '/bootstrap.php'; // Shared settings only (errors are logged, never displayed)
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     http_response_code(405);

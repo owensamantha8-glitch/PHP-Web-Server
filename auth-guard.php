@@ -19,10 +19,10 @@ if (defined('LUM_AUTH_GUARD')) return;
 define('LUM_AUTH_GUARD', true);
 
 // Shared settings, database connections and engines (lum_db(), lum_use(), lum_connect(), lum_page())
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // ---------------- SETTINGS ----------------
-const LUM_LOGIN_URL          = 'https://lynx-um.co.za/Sec/login.php';
+const LUM_LOGIN_URL          = LUM_APP_URL . '/Sec/login.php';
 const LUM_IDLE_TIMEOUT       = 3600;  // Log out after 60 minutes without activity (0 = off)
 const LUM_USER_REFRESH       = 300;   // Re-check the user in the database every 5 minutes
 const LUM_ALLOW_UNLISTED     = false; // Pages/levels without a rule are refused
@@ -186,8 +186,11 @@ function lum_can($page_key, $level = 'view') {
 function lum_require_access($page_key, $level = 'view') {
     if (lum_can($page_key, $level)) return;
 
-    if (LUM_AUDIT_DENIED && is_readable('/var/www/Lynx/Audit/audit-logger.php')) {
-        require_once('/var/www/Lynx/Audit/audit-logger.php');
+    $audit_logger = function_exists('lum_resolve_path')
+        ? lum_resolve_path('/Audit/audit-logger.php')
+        : (__DIR__ . '/audit-logger.php');
+    if (LUM_AUDIT_DENIED && is_readable($audit_logger)) {
+        require_once($audit_logger);
         if (function_exists('lum_audit_log')) {
             lum_audit_log('DENIED', 'page_access', 0, $page_key . ' (' . $level . ')', null, null,
                 ['page' => $page_key, 'level' => $level, 'url' => (string)($_SERVER['REQUEST_URI'] ?? '')]);

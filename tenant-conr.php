@@ -3,7 +3,7 @@
 if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) { http_response_code(403); exit('Forbidden'); }
 
 // Audit trail (does nothing when the logger is missing)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('audit');
 
 if (!class_exists('tenant_conr')) {

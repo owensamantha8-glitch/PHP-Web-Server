@@ -367,7 +367,9 @@ if (!defined('LUM_BACKBILL_ENGINE')) {
     // Returns ['totals', 'billing', 'period', 'tariffs', 'obis', 'seasons'] - the corrected bill.
     function lumAdjRecalculate(array $line, array $tenant_row, array $c) {
         global $tenant_db_conn, $obis_db_conn, $manual_db_conn, $tariff_db_conn;
-        require_once('/var/www/Lynx/Tenant Management/Tenant Consumption Slips/slip-engine.php');
+        require_once function_exists('lum_resolve_path')
+            ? lum_resolve_path('/Tenant Management/Tenant Consumption Slips/slip-engine.php')
+            : (__DIR__ . '/slip-engine.php');
 
         // 1. The report exactly as it was journaled ...
         $req = json_decode((string)($line['j_report_settings'] ?? ''), true);

@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('dashboard', 'view');
 
 // The dashboard never writes to the session: release the lock so other pages are not kept waiting

@@ -1,28 +1,8 @@
 <?php
-// TEMPORARY ERROR REPORTING - REMOVE IN PRODUCTION
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-session_start();
-
-// Redirect if not logged in
-if (!isset($_SESSION['user_name'])) {
-    header("Location: https://lynx-um.co.za/Sec/login.php");
-    exit();
-}
-
-// Include database connection files
-include("/var/www/Lynx/DB Connections/db-conn-meters.php");
-include("/var/www/Lynx/DB Connections/db-conn-obis.php");
-include("/var/www/Lynx/DB Connections/db-conn-tenants.php"); // Needed for Orphan checking
-
-// Core System Database Connection (For Properties Table)
-try {
-    $core_db_conn = new PDO("mysql:host=localhost;dbname=sys_db_properties;charset=utf8mb4", "ruanr@Lynx", "Lynx@1234");
-    $core_db_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    die("Core Database Connection failed: " . $e->getMessage());
-}
+require_once __DIR__ . '/bootstrap.php';
+lum_page('meters', 'view');
+lum_connect('meters', 'obis', 'tenants'); // Needed for orphan checks
+$core_db_conn = lum_db('properties', true); // For the properties table
 
 // ---------------------------------------------------------
 // Helper: Calculate Time Elapsed (Fixed for PHP 8.2+)

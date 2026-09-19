@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_name']) || $_SESSION['role'] !== 'Admin') {
     exit();
 }
 
-include("/var/www/Lynx/DB Connections/db-conn-login.php");
+require_once __DIR__ . '/db-conn-login.php';
 
 $message = "";
 $edit_id = isset($_GET['edit']) ? intval($_GET['edit']) : 0;

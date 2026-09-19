@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('consumption_slips', 'view');
 
 // Slip settings arrive hex-encoded in chunks (p0, p1, ...) so the web application firewall does not block them

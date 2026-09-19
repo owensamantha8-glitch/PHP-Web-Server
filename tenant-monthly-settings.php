@@ -10,7 +10,8 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
-include("/var/www/Lynx/DB Connections/db-conn-tenants.php");
+require_once __DIR__ . '/bootstrap.php';
+lum_connect('tenants');
 
 // Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {

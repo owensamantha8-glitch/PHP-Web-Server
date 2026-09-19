@@ -2,7 +2,7 @@
 // Sets the estimate time ranges (the occupancy override) to cover a billing period.
 // Reached from the warning on the consumption slip sidebar.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('configs', 'edit');
 lum_use('audit');
 

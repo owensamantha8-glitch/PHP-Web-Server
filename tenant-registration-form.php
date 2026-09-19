@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('tenants', 'edit');
 
 // Meter lookup (AJAX): is this serial already linked to a tenant?

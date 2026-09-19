@@ -1,6 +1,6 @@
 <?php
 // Login page: no login check here.
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('audit');
 
 // Session cookie: HTTPS only, not readable by JavaScript, not sent on cross-site requests

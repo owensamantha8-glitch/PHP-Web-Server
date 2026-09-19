@@ -2,7 +2,7 @@
 // Library file: only other pages may include it, it can never be opened directly
 if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) { http_response_code(403); exit('Forbidden'); }
 // Audit trail (switches itself off if the logger is missing; see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('audit');
 
 class manual_genrun_conr {
