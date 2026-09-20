@@ -18,7 +18,7 @@ include __DIR__ . '/db-conn-obis.php';
 include __DIR__ . '/db-conn-tenants.php'; // Needed for Orphan checking
 
 // Core System Database Connection (For Properties Table)
-$core_db_conn = lum_db('properties', true);
+$core_db_conn = lum_db('properties_core', true);
 
 // ---------------------------------------------------------
 // Helper: Calculate Time Elapsed (Fixed for PHP 8.2+)

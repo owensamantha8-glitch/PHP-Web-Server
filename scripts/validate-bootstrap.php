@@ -28,6 +28,11 @@ if (lum_resolve_path('/missing/bootstrap.php') !== false) {
     exit(1);
 }
 
+if (lum_resolve_path('/tmp/bootstrap.php', false) !== false) {
+    fwrite(STDERR, "lum_resolve_path() accepted an absolute path outside the app root.\n");
+    exit(1);
+}
+
 if (!lum_is_safe_return_path('/index.php') || lum_is_safe_return_path('//evil.example/') || lum_is_safe_return_path('https://evil.example/')) {
     fwrite(STDERR, "Return-path validation no longer matches the expected safety rules.\n");
     exit(1);

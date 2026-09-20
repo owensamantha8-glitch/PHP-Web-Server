@@ -167,7 +167,7 @@ if ($cron_info_db) {
 }
 
 // The old cache file sat inside the web root (readable by anyone with the address): never written again, always removed
-$cron_old_file = lum_resolve_path('/Reporting/global_financials.json', false);
+$cron_old_file = lum_resolve_path(LUM_ROOT . '/Reporting/global_financials.json', false);
 if (is_file($cron_old_file) && !@unlink($cron_old_file)) {
     $cron_log('could not delete ' . $cron_old_file . ' - please delete it by hand');
 }

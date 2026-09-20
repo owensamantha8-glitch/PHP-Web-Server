@@ -35,6 +35,7 @@ const LUM_DATABASES = [
     'obis'          => '',
     'users'         => 'sys_db_users',
     'properties'    => 'sys_db_properties',
+    'properties_core' => 'sys_db_properties',
     'information'   => 'sys_db_information',
     'journal'       => 'sys_db_financial_journal',
     'billing_cycle' => 'sys_db_billing_cycle',
@@ -91,6 +92,9 @@ function lum_resolve_path($path, $must_exist = true) {
     if ($path === '') return false;
 
     $path = str_replace('\\', '/', $path);
+    if ($must_exist === false && isset($path[0]) && $path[0] === '/' && strpos($path, $root . '/') !== 0 && $path !== $root) {
+        return false;
+    }
     if (strpos($path, $root . '/') === 0) $path = substr($path, strlen($root) + 1);
     if ($path === $root) return $root;
     if (preg_match('~(^|/)\.\.(/|$)~', $path)) return false;

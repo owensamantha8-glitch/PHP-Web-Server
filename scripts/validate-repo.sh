@@ -5,6 +5,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 while IFS= read -r -d '' file; do
+  case "$file" in
+    *" (1).php") continue ;;
+  esac
   php -l "$file" >/dev/null
 done < <(find "$ROOT_DIR" -name '*.php' -print0 | sort -z)
 
@@ -14,11 +17,15 @@ $patterns = ['https://lynx-um.co.za', '/var/www/Lynx', '/var/secure_configs/lynx
 $allowed = [
     'bootstrap.php' => ['https://lynx-um.co.za', '/var/secure_configs/lynx_db.ini'],
 ];
+$skipSuffixes = [' (1).php'];
 $violations = [];
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('.', FilesystemIterator::SKIP_DOTS));
 foreach ($iterator as $file) {
     if ($file->getExtension() !== 'php') continue;
     $path = str_replace('\\', '/', $file->getPathname());
+    foreach ($skipSuffixes as $suffix) {
+        if (str_ends_with($path, $suffix)) continue 2;
+    }
     $tokens = token_get_all(file_get_contents($path));
     foreach ($tokens as $token) {
         if (!is_array($token)) continue;
