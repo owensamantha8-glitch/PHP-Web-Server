@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('configs', 'view');
 // Start Output Buffering to prevent header conflicts with the embedded Universal Import script
 ob_start();
@@ -416,7 +416,7 @@ if ($can_manage_users) {
     <!-- 2. Sub-Category Action Bar -->
 <?php
 $lum_sub_title = 'System Configurations';
-$lum_sub_back = 'https://lynx-um.co.za/index.php';
+$lum_sub_back = lum_app_url('/index.php');
 ob_start();
 ?>
 <div class="row align-items-center">
@@ -682,7 +682,7 @@ include LUM_ROOT . '/Layout/sub-navbar.php';
         
         <div class="collapse" id="importCollapse">
             <div class="mb-5 mt-3 border">
-                <?php include("/var/www/Lynx/Import/universal-import.php"); ?>
+                <?php include __DIR__ . '/universal-import.php'; ?>
             </div>
         </div>
         <?php endif; ?>

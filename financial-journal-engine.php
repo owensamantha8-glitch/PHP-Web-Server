@@ -1,6 +1,7 @@
 <?php
 // Library file: only other pages may include it, it can never be opened directly
 if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) { http_response_code(403); exit('Forbidden'); }
+require_once __DIR__ . '/bootstrap.php';
 // =========================================================================
 // LYNX UTILITY MANAGEMENT - FINANCIAL JOURNAL ENGINE
 // Location: /var/www/Lynx/Reporting/financial-journal-engine.php
@@ -47,9 +48,9 @@ if (!defined('LUM_JOURNAL_ENGINE')) {
         static $pdo = false;
         if ($pdo !== false) return $pdo;
         $pdo = null;
-        $cfg = @parse_ini_file('/var/secure_configs/lynx_db.ini');
-        if ($cfg === false) {
-            error_log('LUM journal: unable to read /var/secure_configs/lynx_db.ini');
+        $cfg = lum_db_config();
+        if ($cfg === null) {
+            error_log('LUM journal: unable to read ' . LUM_DB_CONFIG);
             return null;
         }
         try {

@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('manual_readings', 'view');
 
 lum_connect('manual'); // $manual_db_conn (bootstrap.php)
@@ -105,7 +105,7 @@ try {
     <div class="sidebar">
         
         <div class="mb-4 d-flex align-items-center">
-            <a href="https://lynx-um.co.za/index.php" class="btn btn-brand btn-sm px-2 shadow-sm me-3">Back</a>
+            <a href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>" class="btn btn-brand btn-sm px-2 shadow-sm me-3">Back</a>
             <span class="fs-6 text-white mb-0">Manual Readings</span>
         </div>
         

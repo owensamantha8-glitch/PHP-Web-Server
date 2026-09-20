@@ -179,8 +179,8 @@ function lumSysDb($database) {
     static $conns = [];
     if (array_key_exists($database, $conns)) return $conns[$database];
     $conns[$database] = null;
-    $cfg = @parse_ini_file('/var/secure_configs/lynx_db.ini');
-    if ($cfg === false || !preg_match('/^[A-Za-z0-9_]+$/', (string)$database)) return null;
+    $cfg = function_exists('lum_db_config') ? lum_db_config() : @parse_ini_file(LUM_DB_CONFIG);
+    if ($cfg === false || $cfg === null || !preg_match('/^[A-Za-z0-9_]+$/', (string)$database)) return null;
     try {
         $pdo = new PDO("mysql:host={$cfg['host']};dbname={$database};charset=utf8mb4", $cfg['username'], $cfg['password']);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

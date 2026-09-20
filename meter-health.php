@@ -2,7 +2,7 @@
 // Meter communication and reading coverage: which meters went quiet, when they went quiet
 // together (one fault, not many), and how complete the readings are for a billing period.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'view');
 ini_set('pcre.jit', '0');
 
@@ -233,7 +233,7 @@ usort($partial, static function ($a, $b) { return $a['coverage'] <=> $b['coverag
 
 <?php
 $lum_sub_title = 'Meter Health';
-$lum_sub_back = 'https://lynx-um.co.za/Meter Management/meter-overview.php';
+$lum_sub_back = lum_app_url('/Meter Management/meter-overview.php');
 include LUM_ROOT . '/Layout/sub-navbar.php';
 ?>
 

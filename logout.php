@@ -1,6 +1,6 @@
 <?php
 // Logout: records the sign-out, ends the session and returns to the login page.
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('audit');
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -32,5 +32,5 @@ if (ini_get('session.use_cookies')) {
 }
 session_destroy();
 
-header('Location: https://lynx-um.co.za/Sec/login.php');
+header('Location: ' . lum_app_url(LUM_LOGIN_PATH));
 exit();

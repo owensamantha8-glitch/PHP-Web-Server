@@ -1,5 +1,5 @@
 <?php
-    require_once '/var/www/Lynx/bootstrap.php';
+    require_once __DIR__ . '/bootstrap.php';
     lum_page('tenants', 'edit');
 
     lum_connect('tenants');
@@ -117,7 +117,7 @@
             }
 
             if (!empty($warnings)) {
-                $back = 'https://lynx-um.co.za/Tenant Management/Tenant Registration/tenant-registration-form.php';
+                $back = lum_app_url('/Tenant Management/Tenant Registration/tenant-registration-form.php');
                 echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Check before saving</title>';
                 echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
                 include LUM_ROOT . '/Layout/head-assets.php';
@@ -182,7 +182,7 @@
                     error_log('LUM slip settings not saved for the new tenant: ' . $e->getMessage());
                 }
 
-                header("Location: https://lynx-um.co.za/Tenant Management/tenant-overview.php");
+                header('Location: ' . lum_app_url('/Tenant Management/tenant-overview.php'));
                 exit(); 
             } else {
                 echo "<h2>Error</h2><p>The database registration failed.</p>";

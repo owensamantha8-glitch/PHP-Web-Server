@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('dashboard', 'view');
 
 // The dashboard never writes to the session: release the lock so other pages are not kept waiting
@@ -557,9 +557,9 @@ lum_mark('Water meter table figures');
 
     <nav id="sidebar" class="sidebar shadow collapsed">
       <ul class="nav flex-column px-2">
-        <li class="nav-item"><a class="nav-link active" href="https://lynx-um.co.za/index.php"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://lynx-um.co.za/Meter Management/meter-overview.php"><i class="bi bi-speedometer me-2"></i> Meters</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://lynx-um.co.za/Tenant Management/tenant-overview.php"><i class="bi bi-people me-2"></i> Tenants</a></li>
+        <li class="nav-item"><a class="nav-link active" href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?php echo htmlspecialchars(lum_app_url('/Meter Management/meter-overview.php'), ENT_QUOTES); ?>"><i class="bi bi-speedometer me-2"></i> Meters</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?php echo htmlspecialchars(lum_app_url('/Tenant Management/tenant-overview.php'), ENT_QUOTES); ?>"><i class="bi bi-people me-2"></i> Tenants</a></li>
         <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#financialReportingMenu" role="button" aria-expanded="false" aria-controls="financialReportingMenu">
                 <span><i class="bi bi-file-earmark-bar-graph me-2"></i> Financial Reporting</span>
@@ -567,23 +567,23 @@ lum_mark('Water meter table figures');
             </a>
             <div class="collapse" id="financialReportingMenu">
                 <ul class="nav flex-column ms-4">
-                    <li class="nav-item"><a class="nav-link py-1" href="https://lynx-um.co.za/Reporting/financial-reporting-overview.php"><i class="bi bi-calendar-month me-2"></i> Monthly Financial Report</a></li>
-                    <li class="nav-item"><a class="nav-link py-1" href="https://lynx-um.co.za/Reporting/financial-reporting-comparison.php"><i class="bi bi-arrow-left-right me-2"></i> Financial Report Comparison</a></li>
+                    <li class="nav-item"><a class="nav-link py-1" href="<?php echo htmlspecialchars(lum_app_url('/Reporting/financial-reporting-overview.php'), ENT_QUOTES); ?>"><i class="bi bi-calendar-month me-2"></i> Monthly Financial Report</a></li>
+                    <li class="nav-item"><a class="nav-link py-1" href="<?php echo htmlspecialchars(lum_app_url('/Reporting/financial-reporting-comparison.php'), ENT_QUOTES); ?>"><i class="bi bi-arrow-left-right me-2"></i> Financial Report Comparison</a></li>
                 </ul>
             </div>
         </li>
-        <li class="nav-item"><a class="nav-link" href="https://lynx-um.co.za/Manual Readings/manual-water-overview.php"><i class="bi bi-pencil-square me-2"></i> Manual Readings</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?php echo htmlspecialchars(lum_app_url('/Manual Readings/manual-water-overview.php'), ENT_QUOTES); ?>"><i class="bi bi-pencil-square me-2"></i> Manual Readings</a></li>
 <?php if (lum_can('audit_log', 'view')): // The audit trail: administrators only, by the access rules ?>
-        <li class="nav-item"><a class="nav-link" href="https://lynx-um.co.za/Configs/audit-log.php"><i class="bi bi-journal-text me-2"></i> Audit Trail</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?php echo htmlspecialchars(lum_app_url('/Configs/audit-log.php'), ENT_QUOTES); ?>"><i class="bi bi-journal-text me-2"></i> Audit Trail</a></li>
 <?php endif; ?>
 <?php if (lum_can('configs', 'edit')): // Configuration is for users who may change settings ?>
-        <li class="nav-item"><a class="nav-link" href="https://lynx-um.co.za/Configs/view-configs.php"><i class="bi bi-gear me-2"></i> Configuration</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?php echo htmlspecialchars(lum_app_url('/Configs/view-configs.php'), ENT_QUOTES); ?>"><i class="bi bi-gear me-2"></i> Configuration</a></li>
 <?php endif; ?>
 <?php if (lum_can('imports', 'view')): // Imports live outside Configuration, so Standard users can reach them ?>
-        <li class="nav-item"><a class="nav-link" href="https://lynx-um.co.za/Import/bulk-import.php"><i class="bi bi-upload me-2"></i> Import</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?php echo htmlspecialchars(lum_app_url('/Import/bulk-import.php'), ENT_QUOTES); ?>"><i class="bi bi-upload me-2"></i> Import</a></li>
 <?php endif; ?>
 <?php if (lum_can('tariffs', 'view')): // Tariffs can be looked up without opening Configuration ?>
-        <li class="nav-item"><a class="nav-link" href="https://lynx-um.co.za/Tarrifs/view-tariffs.php"><i class="bi bi-cash-coin me-2"></i> View Tariffs</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?php echo htmlspecialchars(lum_app_url('/Tarrifs/view-tariffs.php'), ENT_QUOTES); ?>"><i class="bi bi-cash-coin me-2"></i> View Tariffs</a></li>
 <?php endif; ?>
       </ul>
     </nav>

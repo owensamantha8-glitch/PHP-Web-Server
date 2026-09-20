@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('tenants', 'view');
 
 // Notices and warnings are not logged on this page

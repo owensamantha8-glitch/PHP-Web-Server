@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('consumption_slips', 'view');
 
 // Slip settings arrive hex-encoded in chunks (p0, p1, ...) so the web application firewall does not block them
@@ -39,10 +39,10 @@ if ($return_to === 'financial') {
     $lum_rq = [];
     parse_str(substr((string)($_REQUEST['return_query'] ?? ''), 0, 4000), $lum_rq);
     $return_query = http_build_query($lum_rq); // Rebuilt, so only plain query parameters are passed on
-    $back_url = 'https://lynx-um.co.za/Reporting/financial-reporting-overview.php' . ($return_query !== '' ? '?' . $return_query : '');
+    $back_url = lum_app_url('/Reporting/financial-reporting-overview.php') . ($return_query !== '' ? '?' . $return_query : '');
     $back_title = 'Back to the Financial Report';
 } else {
-    $back_url = 'https://lynx-um.co.za/Tenant%20Management/tenant-overview.php';
+    $back_url = lum_app_url('/Tenant%20Management/tenant-overview.php');
     $back_title = 'Back to Tenant Overview';
 }
 $is_submitted = isset($_REQUEST['start_date']);
@@ -145,7 +145,7 @@ if ($return_to === 'financial' && $lum_slip_submitted) {
         }
     }
     $return_query = http_build_query($lum_report_req);
-    $back_url = 'https://lynx-um.co.za/Reporting/financial-reporting-overview.php' . ($return_query !== '' ? '?' . $return_query : '');
+    $back_url = lum_app_url('/Reporting/financial-reporting-overview.php') . ($return_query !== '' ? '?' . $return_query : '');
 
     // b) Tenant settings that differ from the report are saved for this tenant and billing month
     $lum_can_save = lum_can('consumption_slips', 'edit');

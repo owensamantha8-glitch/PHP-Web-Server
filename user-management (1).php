@@ -1,12 +1,13 @@
 <?php
+require_once __DIR__ . '/bootstrap.php';
 session_start();
 if (!isset($_SESSION['user_name']) || $_SESSION['role'] !== 'Admin') {
     // Restrict to 'Admin' role
-    header("Location: https://lynx-um.co.za/index.php");
+    header('Location: ' . lum_app_url('/index.php'));
     exit();
 }
 
-include("/var/www/Lynx/DB Connections/db-conn-login.php");
+include __DIR__ . '/db-conn-login.php';
 
 $message = "";
 $edit_id = isset($_GET['edit']) ? intval($_GET['edit']) : 0;
@@ -202,7 +203,7 @@ $all_properties = ['DHL', 'DHL Hatfield', 'Greystone Crossing', 'Groenkloof Cham
 
     <nav class="navbar navbar-dark py-1 border-bottom d-print-none" style="background-color: #000000; border-color: #333333 !important;">
         <div class="container-fluid px-3">
-            <a class="navbar-brand fs-6 mb-0 text-white lynx-brand-hover transition-colors" href="https://lynx-um.co.za/index.php">
+            <a class="navbar-brand fs-6 mb-0 text-white lynx-brand-hover transition-colors" href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>">
                 Lynx Utility Management
             </a>
             <div class="d-flex align-items-center">
@@ -210,7 +211,7 @@ $all_properties = ['DHL', 'DHL Hatfield', 'Greystone Crossing', 'Groenkloof Cham
                     <i class="bi bi-person-fill text-white me-2"></i>
                     <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?>
                 </div>
-                <a href="https://lynx-um.co.za/Sec/logout.php" class="text-decoration-none small ms-3 ps-3 border-start lynx-logout transition-colors" style="border-color: #333333 !important;">
+                <a href="<?php echo htmlspecialchars(lum_app_url('/Sec/logout.php'), ENT_QUOTES); ?>" class="text-decoration-none small ms-3 ps-3 border-start lynx-logout transition-colors" style="border-color: #333333 !important;">
                     Logout
                 </a>
             </div>
@@ -219,7 +220,7 @@ $all_properties = ['DHL', 'DHL Hatfield', 'Greystone Crossing', 'Groenkloof Cham
 
     <!-- Back Button -->
     <div class="container-fluid px-4 pt-4 pb-0">
-        <a href="https://lynx-um.co.za/index.php" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-2"></i>Back to Dashboard</a>
+        <a href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-2"></i>Back to Dashboard</a>
     </div>
 
     <!-- Main Grid Layout -->

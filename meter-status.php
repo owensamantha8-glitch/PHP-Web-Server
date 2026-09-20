@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/bootstrap.php';
 // TEMPORARY ERROR REPORTING - REMOVE IN PRODUCTION
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -7,22 +8,17 @@ session_start();
 
 // Redirect if not logged in
 if (!isset($_SESSION['user_name'])) {
-    header("Location: https://lynx-um.co.za/Sec/login.php");
+    header('Location: ' . lum_app_url(LUM_LOGIN_PATH));
     exit();
 }
 
 // Include database connection files
-include("/var/www/Lynx/DB Connections/db-conn-meters.php");
-include("/var/www/Lynx/DB Connections/db-conn-obis.php");
-include("/var/www/Lynx/DB Connections/db-conn-tenants.php"); // Needed for Orphan checking
+include __DIR__ . '/db-conn-meters.php';
+include __DIR__ . '/db-conn-obis.php';
+include __DIR__ . '/db-conn-tenants.php'; // Needed for Orphan checking
 
 // Core System Database Connection (For Properties Table)
-try {
-    $core_db_conn = new PDO("mysql:host=localhost;dbname=sys_db_properties;charset=utf8mb4", "ruanr@Lynx", "Lynx@1234");
-    $core_db_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    die("Core Database Connection failed: " . $e->getMessage());
-}
+$core_db_conn = lum_db('properties', true);
 
 // ---------------------------------------------------------
 // Helper: Calculate Time Elapsed (Fixed for PHP 8.2+)
@@ -354,7 +350,7 @@ foreach ($orphan_meters as $serial => $type) {
 
     <nav class="navbar navbar-dark py-1 border-bottom" style="background-color: #000000; border-color: #333333 !important;">
         <div class="container-fluid px-3">
-            <a class="navbar-brand fs-6 mb-0 text-white lynx-brand-hover transition-colors" href="https://lynx-um.co.za/index.php">
+            <a class="navbar-brand fs-6 mb-0 text-white lynx-brand-hover transition-colors" href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>">
                 Lynx Utility Management
             </a>
             <div class="d-flex align-items-center">
@@ -362,7 +358,7 @@ foreach ($orphan_meters as $serial => $type) {
                     <i class="bi bi-person-fill text-white me-2"></i>
                     <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'User'); ?>
                 </div>
-                <a href="https://lynx-um.co.za/Sec/logout.php" class="text-decoration-none small ms-3 ps-3 border-start lynx-logout transition-colors" style="border-color: #333333 !important;">
+                <a href="<?php echo htmlspecialchars(lum_app_url('/Sec/logout.php'), ENT_QUOTES); ?>" class="text-decoration-none small ms-3 ps-3 border-start lynx-logout transition-colors" style="border-color: #333333 !important;">
                     Logout
                 </a>
             </div>

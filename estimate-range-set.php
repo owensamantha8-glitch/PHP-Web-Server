@@ -2,12 +2,12 @@
 // Sets the estimate time ranges (the occupancy override) to cover a billing period.
 // Reached from the warning on the consumption slip sidebar.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('configs', 'edit');
 lum_use('audit');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: https://lynx-um.co.za/Configs/view-configs.php');
+    header('Location: ' . lum_app_url('/Configs/view-configs.php'));
     exit();
 }
 if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', (string)$_POST['csrf_token'])) {
@@ -21,13 +21,13 @@ foreach ([$from, $to] as $d) {
     $v = DateTime::createFromFormat('Y-m-d', $d);
     if (!$v || $v->format('Y-m-d') !== $d) {
         $_SESSION['error_message'] = 'The billing period was not understood, so the estimate windows were left alone.';
-        header('Location: https://lynx-um.co.za/Configs/view-configs.php');
+        header('Location: ' . lum_app_url('/Configs/view-configs.php'));
         exit();
     }
 }
 if (strtotime($to) < strtotime($from)) {
     $_SESSION['error_message'] = 'The billing period ends before it starts, so the estimate windows were left alone.';
-    header('Location: https://lynx-um.co.za/Configs/view-configs.php');
+    header('Location: ' . lum_app_url('/Configs/view-configs.php'));
     exit();
 }
 
@@ -68,9 +68,9 @@ try {
 
 // Back to the slip the warning came from, if it was one of ours
 $return = (string)($_POST['return_to'] ?? '');
-if ($return !== '' && $return[0] === '/' && strpos($return, '//') !== 0) {
-    header('Location: https://lynx-um.co.za' . $return);
+if (lum_is_safe_return_path($return)) {
+    header('Location: ' . lum_app_url($return));
     exit();
 }
-header('Location: https://lynx-um.co.za/Configs/view-configs.php');
+header('Location: ' . lum_app_url('/Configs/view-configs.php'));
 exit();

@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'edit');
 
 // =========================================================================
@@ -204,7 +204,7 @@ try {
     <div class="action-bar mb-5">
         <div class="container-fluid px-4">
             <div class="d-flex align-items-center">
-                <a href="https://lynx-um.co.za/Meter Management/meter-overview.php" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
+                <a href="<?php echo htmlspecialchars(lum_app_url('/Meter Management/meter-overview.php'), ENT_QUOTES); ?>" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
                     Back
                 </a>
                 <span class="fs-6 text-white mb-0">Meter Registration</span>

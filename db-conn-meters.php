@@ -6,7 +6,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 // The connection itself is made by lum_db() in /var/www/Lynx/bootstrap.php
 // (opened once per page and shared). New code can call lum_db('meters') directly.
 // =========================================================================
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Kept for older pages that read these after including this file
 $config = lum_db_config();
@@ -17,5 +17,5 @@ $host = $config['host'];
 
 $meter_db_conn = lum_db('meters', true);
 
-require_once "/var/www/Lynx/Meter Management/Meter Control/meter-conr.php";
+require_once lum_resolve_path('/Meter Management/Meter Control/meter-conr.php');
 $meter_crud = new meter_conr($meter_db_conn);

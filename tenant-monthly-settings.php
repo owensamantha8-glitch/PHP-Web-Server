@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/bootstrap.php';
 // TEMPORARY ERROR REPORTING - REMOVE IN PRODUCTION
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -6,11 +7,11 @@ error_reporting(E_ALL);
 session_start();
 
 if (!isset($_SESSION['user_name'])) {
-    header("Location: https://lynx-um.co.za/Sec/login.php");
+    header('Location: ' . lum_app_url(LUM_LOGIN_PATH));
     exit();
 }
 
-include("/var/www/Lynx/DB Connections/db-conn-tenants.php");
+include __DIR__ . '/db-conn-tenants.php';
 
 // Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
@@ -110,7 +111,7 @@ if (!empty($selected_prop)) {
 
 <nav class="navbar navbar-dark py-1 border-bottom" style="background-color: #000000; border-color: #333333 !important;">
     <div class="container-fluid px-3">
-        <a class="navbar-brand fs-6 mb-0 text-white lynx-brand-hover" href="https://lynx-um.co.za/index.php">Lynx Utility Management</a>
+        <a class="navbar-brand fs-6 mb-0 text-white lynx-brand-hover" href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>">Lynx Utility Management</a>
     </div>
 </nav>
 

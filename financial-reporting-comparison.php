@@ -2,7 +2,7 @@
 // Two financial reports beside each other: the same property on two billing cycles,
 // or two properties, with the difference per tenant.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('financial_reports', 'view');
 ini_set('pcre.jit', '0');
 set_time_limit(900);
@@ -138,7 +138,7 @@ if ($report_a && $report_b) {
 }
 
 $lum_sub_title = 'Financial Report Comparison';
-$lum_sub_back = 'https://lynx-um.co.za/Reporting/financial-reporting-overview.php';
+$lum_sub_back = lum_app_url('/Reporting/financial-reporting-overview.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('users', 'view');
 
 $login_db_conn = lum_db_mysqli_users(true);
@@ -533,7 +533,7 @@ sort($form_properties, SORT_NATURAL | SORT_FLAG_CASE);
 
     <?php
     $lum_sub_title = 'User Management';
-    $lum_sub_back = 'https://lynx-um.co.za/Configs/view-configs.php';
+    $lum_sub_back = lum_app_url('/Configs/view-configs.php');
     include LUM_ROOT . '/Layout/sub-navbar.php';
     ?>
 

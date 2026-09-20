@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('manual_readings', 'edit');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -11,11 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     lum_connect('manual', 'tenants'); // $manual_db_conn, $tenant_db_conn (bootstrap.php)
-    require_once LUM_ROOT . "/Manual Readings/Manual Water Control/manual-water-conr.php";
+    require_once lum_resolve_path('/Manual Readings/Manual Water Control/manual-water-conr.php');
 
     $manual_reading_crud = new manual_water_conr($manual_db_conn);
 
-    $overview_url = "https://lynx-um.co.za/Manual%20Readings/manual-water-overview.php";
+    $overview_url = lum_app_url('/Manual%20Readings/manual-water-overview.php');
 
     $property = trim($_POST['property'] ?? '');
     $reading_date = $_POST['reading_date'] ?? date('Y-m-d');
@@ -160,10 +160,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['error_message'] = "These readings were not added: " . implode(' | ', $refused);
     }
 
-    header("Location: https://lynx-um.co.za/Manual%20Readings/manual-water-overview.php");
+    header('Location: ' . $overview_url);
     exit();
 } else {
-    header("Location: https://lynx-um.co.za/Manual%20Readings/manual-water-overview.php");
+    header('Location: ' . lum_app_url('/Manual%20Readings/manual-water-overview.php'));
     exit();
 }
 ?>

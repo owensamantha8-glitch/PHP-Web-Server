@@ -1,6 +1,6 @@
 <?php
     // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-    require_once '/var/www/Lynx/bootstrap.php';
+    require_once __DIR__ . '/bootstrap.php';
     lum_page('meters', 'edit');
 
     lum_connect('meters'); // $meter_db_conn, $meter_crud
@@ -114,7 +114,7 @@
         }
 
         if ($result) {
-            header("Location: https://lynx-um.co.za/Meter Management/meter-overview.php");
+            header('Location: ' . lum_app_url('/Meter Management/meter-overview.php'));
             exit(); 
         } else {
             // Halting redirect so you can read the database error

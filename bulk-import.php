@@ -1,7 +1,7 @@
 <?php
 // Bulk import of tenants, meters and manual readings from a CSV file.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('imports', 'view');
 lum_use('audit');
 ini_set('pcre.jit', '0');
@@ -289,7 +289,7 @@ $can_import = lum_can('imports', 'edit');
 
 <?php
 $lum_sub_title = 'Bulk Import';
-$lum_sub_back = 'https://lynx-um.co.za/index.php';
+$lum_sub_back = lum_app_url('/index.php');
 include LUM_ROOT . '/Layout/sub-navbar.php';
 ?>
 

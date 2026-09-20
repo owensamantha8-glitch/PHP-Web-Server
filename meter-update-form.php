@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'edit');
 
 // =========================================================================
@@ -259,7 +259,7 @@ elseif (!empty($meter['meter_tenant_02'])) { $init_tenants = 2; }
     <div class="action-bar mb-5">
         <div class="container-fluid px-4">
             <div class="d-flex align-items-center">
-                <a href="https://lynx-um.co.za/Meter Management/meter-overview.php" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
+                <a href="<?php echo htmlspecialchars(lum_app_url('/Meter Management/meter-overview.php'), ENT_QUOTES); ?>" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
                     Back
                 </a>
                 <span class="fs-6 text-white mb-0">Edit Meter Details</span>
@@ -330,7 +330,7 @@ elseif (!empty($meter['meter_tenant_02'])) { $init_tenants = 2; }
                                 <div class="col-md-6 transition-all" id="meter_ct_ratio_container">
                                     <label for="f-meter_ct_ratio" class="form-label">CT Ratio</label>
                                     <input type="number" step="0.01" min="0.01" class="form-control" id="f-meter_ct_ratio" name="f-meter_ct_ratio" value="<?php echo htmlspecialchars(number_format((float)($meter['ct_ratio'] ?? 1), 2, '.', '')); ?>">
-                                    <a class="small text-info" href="https://lynx-um.co.za/Tenant Management/correct-ct-ratio.php">Correct a past ratio</a>
+                                    <a class="small text-info" href="<?php echo htmlspecialchars(lum_app_url('/Tenant Management/correct-ct-ratio.php'), ENT_QUOTES); ?>">Correct a past ratio</a>
                                 </div>
 
                                 <div class="col-md-6 transition-all" id="meter_type_container">
@@ -421,7 +421,7 @@ elseif (!empty($meter['meter_tenant_02'])) { $init_tenants = 2; }
                             </div>
 
                             <div class="mt-5 d-flex justify-content-end gap-3">
-                                <a href="https://lynx-um.co.za/Meter Management/meter-overview.php" class="btn btn-outline-light px-4">Cancel</a>
+                                <a href="<?php echo htmlspecialchars(lum_app_url('/Meter Management/meter-overview.php'), ENT_QUOTES); ?>" class="btn btn-outline-light px-4">Cancel</a>
                                 <button type="submit" class="btn btn-brand" name="f-update-meter" id="f-update-meter"><i class="bi bi-check-circle me-2"></i>Update Meter</button>
                             </div>
                         </div>
