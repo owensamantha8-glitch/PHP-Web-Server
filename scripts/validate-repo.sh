@@ -16,6 +16,7 @@ php <<'PHP'
 $patterns = ['https://lynx-um.co.za', '/var/www/Lynx', '/var/secure_configs/lynx_db.ini'];
 $allowed = [
     'bootstrap.php' => ['https://lynx-um.co.za', '/var/secure_configs/lynx_db.ini'],
+    '.env.example' => ['https://example.com', '/var/www/Lynx', '/var/secure_configs/lynx_db.ini'],
 ];
 $skipFiles = ['bootstrap.php'];
 $skipSuffixes = [' (1).php'];
@@ -46,6 +47,28 @@ if ($violations) {
     exit(1);
 }
 fwrite(STDOUT, "Hardcoded deployment reference check passed.\n");
+PHP
+
+php <<'PHP'
+<?php
+$patterns = ['https://lynx-um.co.za', '/var/www/Lynx', '/var/secure_configs/lynx_db.ini'];
+$allowed = [
+    '.env.example' => ['https://example.com', '/var/www/Lynx', '/var/secure_configs/lynx_db.ini'],
+    'validate-repo.sh' => ['https://lynx-um.co.za', '/var/www/Lynx', '/var/secure_configs/lynx_db.ini'],
+];
+$files = ['README.md', '.env.example', '.github/workflows/validate.yml', 'scripts/validate-repo.sh'];
+foreach ($files as $path) {
+    if (!is_file($path)) continue;
+    $lines = file($path, FILE_IGNORE_NEW_LINES);
+    foreach ($lines as $lineNo => $line) {
+        foreach ($patterns as $pattern) {
+            if (strpos($line, $pattern) === false) continue;
+            if (in_array($pattern, $allowed[basename($path)] ?? [], true)) continue;
+            fwrite(STDERR, "Unexpected hardcoded deployment references found:\n{$path}:" . ($lineNo + 1) . ':' . trim($line) . "\n");
+            exit(1);
+        }
+    }
+}
 PHP
 
 php "$ROOT_DIR/scripts/validate-bootstrap.php" >/dev/null

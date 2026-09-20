@@ -95,7 +95,8 @@ function lum_resolve_path($path, $must_exist = true) {
     if ($path === '') return false;
 
     $path = str_replace('\\', '/', $path);
-    if (isset($path[0]) && $path[0] === '/') {
+    $is_windows_absolute = (bool)preg_match('~^[A-Za-z]:/~', $path);
+    if ($is_windows_absolute || (isset($path[0]) && $path[0] === '/')) {
         if ($path === $root) return $root;
         if (strpos($path, $root . '/') === 0) {
             $path = substr($path, strlen($root) + 1);
