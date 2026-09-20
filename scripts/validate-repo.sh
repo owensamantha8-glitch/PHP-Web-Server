@@ -19,7 +19,7 @@ allowed = {
     ('bootstrap.php', '/var/secure_configs/lynx_db.ini'),
 }
 violations = []
-for path in sorted(root.glob('*.php')):
+for path in sorted(root.rglob('*.php')):
     for lineno, line in enumerate(path.read_text(errors='ignore').splitlines(), 1):
         stripped = line.strip()
         if stripped.startswith(('//', '/*', '*', '#')):
