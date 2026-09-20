@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     lum_connect('manual'); // $manual_db_conn (bootstrap.php)
-    require_once lum_resolve_path('/Manual Readings/Manual GenRun Control/manual-genrun-conr.php');
+    require_once lum_resolve_path('/manual-genrun-conr.php');
 
     $conr = new manual_genrun_conr($manual_db_conn);
 

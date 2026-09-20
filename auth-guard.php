@@ -186,7 +186,7 @@ function lum_can($page_key, $level = 'view') {
 function lum_require_access($page_key, $level = 'view') {
     if (lum_can($page_key, $level)) return;
 
-    $audit_logger = lum_resolve_path('/Audit/audit-logger.php');
+    $audit_logger = lum_resolve_path('/audit-logger.php');
     if (LUM_AUDIT_DENIED && $audit_logger && is_readable($audit_logger)) {
         require_once $audit_logger;
         if (function_exists('lum_audit_log')) {

@@ -17,5 +17,5 @@ $host = $config['host'];
 
 $meter_db_conn = lum_db('meters', true);
 
-require_once lum_resolve_path('/Meter Management/Meter Control/meter-conr.php');
+require_once lum_resolve_path('/meter-conr.php');
 $meter_crud = new meter_conr($meter_db_conn);

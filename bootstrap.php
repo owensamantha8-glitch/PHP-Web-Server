@@ -52,13 +52,13 @@ const LUM_DB_GLOBALS = [
 // Shared engines (lum_use) => file below LUM_ROOT
 const LUM_LIBRARIES = [
     'audit'        => '/Audit/audit-logger.php',
-    'reporting'    => '/Reporting/reporting-engine.php',
-    'slips'        => '/Tenant Management/Tenant Consumption Slips/slip-engine.php',
-    'journal'      => '/Reporting/financial-journal-engine.php',
-    'back_billing' => '/Reporting/back-billing-engine.php',
-    'tenant_forms' => '/Tenant Management/tenant-form-options.php',
-    'meters'       => '/Meter Management/Meter Control/meter-conr.php',
-    'tenants'      => '/Tenant Management/Tenant Control/tenant-conr.php',
+    'reporting'    => '/reporting-engine.php',
+    'slips'        => '/slip-engine.php',
+    'journal'      => '/financial-journal-engine.php',
+    'back_billing' => '/back-billing-engine.php',
+    'tenant_forms' => '/tenant-form-options.php',
+    'meters'       => '/meter-conr.php',
+    'tenants'      => '/tenant-conr.php',
 ];
 
 ini_set('display_errors', 0);
@@ -98,21 +98,15 @@ function lum_resolve_path($path, $must_exist = true) {
     $relative = ltrim($path, '/');
     if ($relative === '') return $root;
 
-    $candidates = [$root . '/' . $relative];
-    $basename = basename($relative);
-    if ($basename !== $relative) $candidates[] = $root . '/' . $basename;
-
-    foreach (array_unique($candidates) as $candidate) {
-        $real = realpath($candidate);
-        if ($real !== false) {
-            $real = str_replace('\\', '/', $real);
-            if ($real === $root || strpos($real . '/', $root . '/') === 0) return $real;
-            continue;
-        }
-        if (!$must_exist) {
-            $candidate = str_replace('\\', '/', $candidate);
-            if (strpos($candidate . '/', $root . '/') === 0) return $candidate;
-        }
+    $candidate = $root . '/' . $relative;
+    $real = realpath($candidate);
+    if ($real !== false) {
+        $real = str_replace('\\', '/', $real);
+        if ($real === $root || strpos($real . '/', $root . '/') === 0) return $real;
+    }
+    if (!$must_exist) {
+        $candidate = str_replace('\\', '/', $candidate);
+        if (strpos($candidate . '/', $root . '/') === 0) return $candidate;
     }
 
     return false;
@@ -257,7 +251,7 @@ function lum_audit_stubs() {
 
 // Login and page access for web pages; command-line (cron) scripts are not checked
 function lum_page($page_key = null, $level = 'view') {
-    $auth_guard = lum_resolve_path('/Sec/auth-guard.php');
+    $auth_guard = lum_resolve_path('/auth-guard.php');
     if ($auth_guard === false) lum_db_fail('Critical Error: auth guard missing.');
     require_once $auth_guard;
     if (PHP_SAPI === 'cli') return;

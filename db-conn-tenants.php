@@ -17,5 +17,5 @@ $host = $config['host'];
 
 $tenant_db_conn = lum_db('tenants', true);
 
-require_once lum_resolve_path('/Tenant Management/Tenant Control/tenant-conr.php');
+require_once lum_resolve_path('/tenant-conr.php');
 $tenant_crud = new tenant_conr($tenant_db_conn);

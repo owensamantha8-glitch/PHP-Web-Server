@@ -8,32 +8,36 @@ while IFS= read -r -d '' file; do
   php -l "$file" >/dev/null
 done < <(find "$ROOT_DIR" -name '*.php' -print0 | sort -z)
 
-python - <<'PY'
-from pathlib import Path
-import sys
-
-root = Path('.')
-patterns = ('https://lynx-um.co.za', '/var/www/Lynx', '/var/secure_configs/lynx_db.ini')
-allowed = {
-    ('bootstrap.php', 'https://lynx-um.co.za'),
-    ('bootstrap.php', '/var/secure_configs/lynx_db.ini'),
+php <<'PHP'
+<?php
+$patterns = ['https://lynx-um.co.za', '/var/www/Lynx', '/var/secure_configs/lynx_db.ini'];
+$allowed = [
+    'bootstrap.php' => ['https://lynx-um.co.za', '/var/secure_configs/lynx_db.ini'],
+];
+$violations = [];
+$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('.', FilesystemIterator::SKIP_DOTS));
+foreach ($iterator as $file) {
+    if ($file->getExtension() !== 'php') continue;
+    $path = str_replace('\\', '/', $file->getPathname());
+    $tokens = token_get_all(file_get_contents($path));
+    foreach ($tokens as $token) {
+        if (!is_array($token)) continue;
+        [$type, $text, $line] = $token;
+        if ($type === T_COMMENT || $type === T_DOC_COMMENT) continue;
+        foreach ($patterns as $pattern) {
+            if (strpos($text, $pattern) === false) continue;
+            if (in_array($pattern, $allowed[basename($path)] ?? [], true)) continue;
+            $violations[] = $path . ':' . $line . ':' . trim($text);
+        }
+    }
 }
-violations = []
-for path in sorted(root.rglob('*.php')):
-    for lineno, line in enumerate(path.read_text(errors='ignore').splitlines(), 1):
-        stripped = line.strip()
-        if stripped.startswith(('//', '/*', '*', '#')):
-            continue
-        for pattern in patterns:
-            if pattern in line and (path.name, pattern) not in allowed:
-                violations.append(f'{path}:{lineno}:{stripped}')
-if violations:
-    print('Unexpected hardcoded deployment references found:')
-    for item in violations:
-        print(item)
-    sys.exit(1)
-print('Hardcoded deployment reference check passed.')
-PY
+if ($violations) {
+    fwrite(STDERR, "Unexpected hardcoded deployment references found:\n");
+    foreach ($violations as $item) fwrite(STDERR, $item . "\n");
+    exit(1);
+}
+fwrite(STDOUT, "Hardcoded deployment reference check passed.\n");
+PHP
 
 php "$ROOT_DIR/scripts/validate-bootstrap.php" >/dev/null
 

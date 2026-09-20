@@ -23,6 +23,11 @@ foreach (['../bootstrap.php', '/../../etc/passwd', '..\\bootstrap.php'] as $bad)
     }
 }
 
+if (lum_resolve_path('/missing/bootstrap.php') !== false) {
+    fwrite(STDERR, "lum_resolve_path() incorrectly fell back from a missing nested path.\n");
+    exit(1);
+}
+
 if (!lum_is_safe_return_path('/index.php') || lum_is_safe_return_path('//evil.example/') || lum_is_safe_return_path('https://evil.example/')) {
     fwrite(STDERR, "Return-path validation no longer matches the expected safety rules.\n");
     exit(1);
