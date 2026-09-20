@@ -4,7 +4,17 @@ require_once __DIR__ . '/bootstrap.php';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'secure'   => true,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    ini_set('session.use_strict_mode', 1);
+    session_start();
+}
 
 // Redirect if not logged in
 if (!isset($_SESSION['user_name'])) {

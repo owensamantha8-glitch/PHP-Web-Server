@@ -1,6 +1,16 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'secure'   => true,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    ini_set('session.use_strict_mode', 1);
+    session_start();
+}
 if (!isset($_SESSION['user_name']) || $_SESSION['role'] !== 'Admin') {
     // Restrict to 'Admin' role
     header('Location: ' . lum_app_url('/index.php'));

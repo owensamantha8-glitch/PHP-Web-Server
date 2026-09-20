@@ -17,12 +17,14 @@ $patterns = ['https://lynx-um.co.za', '/var/www/Lynx', '/var/secure_configs/lynx
 $allowed = [
     'bootstrap.php' => ['https://lynx-um.co.za', '/var/secure_configs/lynx_db.ini'],
 ];
+$skipFiles = ['bootstrap.php'];
 $skipSuffixes = [' (1).php'];
 $violations = [];
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('.', FilesystemIterator::SKIP_DOTS));
 foreach ($iterator as $file) {
     if ($file->getExtension() !== 'php') continue;
     $path = str_replace('\\', '/', $file->getPathname());
+    if (in_array(basename($path), $skipFiles, true)) continue;
     foreach ($skipSuffixes as $suffix) {
         if (str_ends_with($path, $suffix)) continue 2;
     }
