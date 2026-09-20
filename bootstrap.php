@@ -78,7 +78,10 @@ function lum_app_url($path = '') {
 
 function lum_is_safe_return_path($path) {
     $path = (string)$path;
-    return $path !== '' && $path[0] === '/' && strpos($path, '//') !== 0;
+    return $path !== ''
+        && $path[0] === '/'
+        && strpos($path, '//') !== 0
+        && !preg_match('~(^|/)\.\.(/|$)~', $path);
 }
 
 function lum_resolve_path($path, $must_exist = true) {
@@ -92,10 +95,14 @@ function lum_resolve_path($path, $must_exist = true) {
     if ($path === '') return false;
 
     $path = str_replace('\\', '/', $path);
-    if ($must_exist === false && isset($path[0]) && $path[0] === '/' && strpos($path, $root . '/') !== 0 && $path !== $root) {
-        return false;
+    if (isset($path[0]) && $path[0] === '/') {
+        if ($path === $root) return $root;
+        if (strpos($path, $root . '/') === 0) {
+            $path = substr($path, strlen($root) + 1);
+        } elseif ($must_exist === false) {
+            return false;
+        }
     }
-    if (strpos($path, $root . '/') === 0) $path = substr($path, strlen($root) + 1);
     if ($path === $root) return $root;
     if (preg_match('~(^|/)\.\.(/|$)~', $path)) return false;
 
