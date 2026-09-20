@@ -1,7 +1,7 @@
 <?php
 // Electricity and water usage of a property over two periods, side by side.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'view');
 lum_use('meters');
 ini_set('pcre.jit', '0');
@@ -171,7 +171,7 @@ $avg_a = $total_a / $a_days;
 $avg_b = $total_b / $b_days;
 
 $lum_sub_title = 'Usage Comparison';
-$lum_sub_back = 'https://lynx-um.co.za/Meter Management/meter-overview.php';
+$lum_sub_back = lum_app_url('/Meter Management/meter-overview.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">

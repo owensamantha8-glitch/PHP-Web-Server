@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('configs', 'view');
 
 $can_delete_configs = lum_can('configs', 'delete'); // Delete buttons
@@ -263,7 +263,7 @@ try {
                     <i class="bi bi-person-fill text-white me-2"></i>
                     <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'User'); ?>
                 </div>
-                <a href="https://lynx-um.co.za/Sec/logout.php" class="text-decoration-none small ms-3 ps-3 border-start lynx-logout transition-colors" style="border-color: #333333 !important;">
+                <a href="<?php echo htmlspecialchars(lum_app_url('/Sec/logout.php'), ENT_QUOTES); ?>" class="text-decoration-none small ms-3 ps-3 border-start lynx-logout transition-colors" style="border-color: #333333 !important;">
                     Logout
                 </a>
             </div>

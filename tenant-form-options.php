@@ -3,7 +3,7 @@
 if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) { http_response_code(403); exit('Forbidden'); }
 // Shared by the tenant registration and update forms: tariff drop-downs, property switches and municipality defaults
 
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('slips'); // Property settings and the tariff catalog
 
 if (!defined('LUM_TENANT_FORM_STANDARD_TARIFFS')) {

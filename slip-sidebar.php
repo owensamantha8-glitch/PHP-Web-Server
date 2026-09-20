@@ -494,7 +494,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
     </form>
 
     <?php if (!empty($est_not_covering) && function_exists('lum_can') && lum_can('configs', 'edit')): ?>
-    <form method="POST" action="https://lynx-um.co.za/Configs/estimate-range-set.php" id="lum_estimate_range_form" class="d-none">
+    <form method="POST" action="<?php echo htmlspecialchars(lum_app_url('/Configs/estimate-range-set.php'), ENT_QUOTES); ?>" id="lum_estimate_range_form" class="d-none">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
         <input type="hidden" name="period_start" value="<?php echo htmlspecialchars(substr($est_period_start, 0, 10)); ?>">
         <input type="hidden" name="period_end" value="<?php echo htmlspecialchars(substr($est_period_end, 0, 10)); ?>">

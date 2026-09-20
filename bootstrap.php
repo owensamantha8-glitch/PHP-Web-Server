@@ -10,8 +10,21 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 if (defined('LUM_BOOTSTRAP')) return;
 define('LUM_BOOTSTRAP', true);
 
-define('LUM_ROOT', '/var/www/Lynx');
-define('LUM_DB_CONFIG', '/var/secure_configs/lynx_db.ini');   // Outside the web root
+$lum_default_root = realpath(__DIR__) ?: __DIR__;
+$lum_app_root = rtrim((string)(getenv('LUM_APP_ROOT') ?: $lum_default_root), DIRECTORY_SEPARATOR);
+if ($lum_app_root === '') $lum_app_root = $lum_default_root;
+define('LUM_APP_ROOT', $lum_app_root);
+define('LUM_ROOT', LUM_APP_ROOT); // Legacy alias used throughout the application
+
+$lum_app_url = rtrim((string)(getenv('LUM_APP_URL') ?: 'https://lynx-um.co.za'), '/');
+if ($lum_app_url === '') $lum_app_url = 'https://lynx-um.co.za';
+define('LUM_APP_URL', $lum_app_url);
+
+$lum_login_path = trim((string)(getenv('LUM_LOGIN_PATH') ?: '/Sec/login.php'));
+if ($lum_login_path === '' || $lum_login_path[0] !== '/') $lum_login_path = '/' . ltrim($lum_login_path, '/');
+define('LUM_LOGIN_PATH', $lum_login_path);
+
+define('LUM_DB_CONFIG', (string)(getenv('LUM_DB_CONFIG') ?: '/var/secure_configs/lynx_db.ini'));   // Outside the web root
 
 // Short database names => MySQL databases ('' = server level, for the yearly OBIS databases)
 const LUM_DATABASES = [
@@ -22,6 +35,7 @@ const LUM_DATABASES = [
     'obis'          => '',
     'users'         => 'sys_db_users',
     'properties'    => 'sys_db_properties',
+    'properties_core' => 'sys_db_properties',
     'information'   => 'sys_db_information',
     'journal'       => 'sys_db_financial_journal',
     'billing_cycle' => 'sys_db_billing_cycle',
@@ -38,14 +52,14 @@ const LUM_DB_GLOBALS = [
 
 // Shared engines (lum_use) => file below LUM_ROOT
 const LUM_LIBRARIES = [
-    'audit'        => '/Audit/audit-logger.php',
-    'reporting'    => '/Reporting/reporting-engine.php',
-    'slips'        => '/Tenant Management/Tenant Consumption Slips/slip-engine.php',
-    'journal'      => '/Reporting/financial-journal-engine.php',
-    'back_billing' => '/Reporting/back-billing-engine.php',
-    'tenant_forms' => '/Tenant Management/tenant-form-options.php',
-    'meters'       => '/Meter Management/Meter Control/meter-conr.php',
-    'tenants'      => '/Tenant Management/Tenant Control/tenant-conr.php',
+    'audit'        => 'audit-logger.php',
+    'reporting'    => 'reporting-engine.php',
+    'slips'        => 'slip-engine.php',
+    'journal'      => 'financial-journal-engine.php',
+    'back_billing' => 'back-billing-engine.php',
+    'tenant_forms' => 'tenant-form-options.php',
+    'meters'       => 'meter-conr.php',
+    'tenants'      => 'tenant-conr.php',
 ];
 
 ini_set('display_errors', 0);
@@ -55,6 +69,60 @@ error_reporting(E_ALL);
 date_default_timezone_set('Africa/Johannesburg');
 // PCRE JIT is not permitted on this server: disable it before any preg_* call
 ini_set('pcre.jit', '0');
+
+function lum_app_url($path = '') {
+    $path = (string)$path;
+    if ($path === '') return LUM_APP_URL;
+    return LUM_APP_URL . ($path[0] === '/' ? $path : '/' . $path);
+}
+
+function lum_is_safe_return_path($path) {
+    $path = (string)$path;
+    return $path !== ''
+        && $path[0] === '/'
+        && strpos($path, '//') !== 0
+        && !preg_match('~(^|/)\.\.(/|$)~', $path);
+}
+
+function lum_resolve_path($path, $must_exist = true) {
+    static $root = null;
+    if ($root === null) {
+        $root = realpath(LUM_APP_ROOT) ?: LUM_APP_ROOT;
+        $root = rtrim(str_replace('\\', '/', $root), '/');
+    }
+
+    $path = str_replace("\0", '', (string)$path);
+    if ($path === '') return false;
+
+    $path = str_replace('\\', '/', $path);
+    $is_windows_absolute = (bool)preg_match('~^[A-Za-z]:/~', $path);
+    if ($is_windows_absolute || (isset($path[0]) && $path[0] === '/')) {
+        if ($path === $root) return $root;
+        if (strpos($path, $root . '/') === 0) {
+            $path = substr($path, strlen($root) + 1);
+        } else {
+            return false;
+        }
+    }
+    if ($path === $root) return $root;
+    if (preg_match('~(^|/)\.\.(/|$)~', $path)) return false;
+
+    $relative = ltrim($path, '/');
+    if ($relative === '') return $root;
+
+    $candidate = $root . '/' . $relative;
+    $real = realpath($candidate);
+    if ($real !== false) {
+        $real = str_replace('\\', '/', $real);
+        if ($real === $root || strpos($real . '/', $root . '/') === 0) return $real;
+    }
+    if (!$must_exist) {
+        $candidate = str_replace('\\', '/', $candidate);
+        if (strpos($candidate . '/', $root . '/') === 0) return $candidate;
+    }
+
+    return false;
+}
 
 // Read once; null when the file is missing or incomplete
 function lum_db_config() {
@@ -148,9 +216,9 @@ function lum_use(...$names) {
             $ok = false;
             continue;
         }
-        $file = LUM_ROOT . LUM_LIBRARIES[$name];
-        if (!is_readable($file)) {
-            error_log('LUM: library not found: ' . $file);
+        $file = lum_resolve_path(LUM_LIBRARIES[$name]);
+        if ($file === false || !is_readable($file)) {
+            error_log('LUM: library not found: ' . LUM_LIBRARIES[$name]);
             $ok = false;
             if ($name === 'audit') lum_audit_stubs();
             continue;
@@ -195,7 +263,9 @@ function lum_audit_stubs() {
 
 // Login and page access for web pages; command-line (cron) scripts are not checked
 function lum_page($page_key = null, $level = 'view') {
-    require_once LUM_ROOT . '/Sec/auth-guard.php';
+    $auth_guard = lum_resolve_path('auth-guard.php');
+    if ($auth_guard === false) lum_db_fail('Critical Error: auth guard missing.');
+    require_once $auth_guard;
     if (PHP_SAPI === 'cli') return;
     // auth-guard.php is loaded inside this function, so its page variables must be set globally
     $GLOBALS['csrf_token'] = lum_csrf_token();

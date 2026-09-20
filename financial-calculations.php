@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('financial_reports', 'view');
 
 // 1. DATABASE CONNECTIONS, SHARED SLIP ENGINE (also loads reporting-engine.php), JOURNAL AND AUDIT (bootstrap.php)

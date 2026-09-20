@@ -4,7 +4,7 @@
 // changed when a meter was re-programmed: the first corrects the history, the second starts
 // a new period. Both are done from here, deliberately, and both are recorded.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('tenants', 'view');
 lum_use('audit');
 ini_set('pcre.jit', '0');
@@ -200,7 +200,7 @@ if ($tenant_row && !empty($tenant_row['tenant_id'])) {
 
 <?php
 $lum_sub_title = 'CT Ratios';
-$lum_sub_back = 'https://lynx-um.co.za/Tenant Management/tenant-overview.php';
+$lum_sub_back = lum_app_url('/Tenant Management/tenant-overview.php');
 include LUM_ROOT . '/Layout/sub-navbar.php';
 ?>
 

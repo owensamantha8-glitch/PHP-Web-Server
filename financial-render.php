@@ -103,7 +103,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
                 // Open any tenant's single consumption slip with exactly the same report settings
                 $slip_link_params = $_GET;
                 unset($slip_link_params['property'], $slip_link_params['show_tenant_bar'], $slip_link_params['show_elec_pie'], $slip_link_params['show_water_pie'], $slip_link_params['show_daily_fin']);
-                $slip_link_base = 'https://lynx-um.co.za/Tenant%20Management/Tenant%20Consumption%20Slips/view-consumption-slip.php';
+                $slip_link_base = lum_app_url('/Tenant%20Management/Tenant%20Consumption%20Slips/view-consumption-slip.php');
                 // The slip's Back button returns to this report with exactly the same settings
                 $slip_link_params['return_to'] = 'financial';
                 $slip_link_params['return_query'] = http_build_query($_GET);

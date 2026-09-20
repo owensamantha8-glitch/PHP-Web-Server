@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('imports', 'view');
 // Uploading, starting, cancelling or clearing an import changes data: edit rights required
 if (isset($_GET['action']) || isset($_GET['clear_progress']) || isset($_GET['kill_import'])) {

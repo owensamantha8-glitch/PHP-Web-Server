@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'view');
 ini_set('pcre.jit', '0'); // Safely disable PCRE JIT to prevent memory allocation security warnings
 
@@ -601,7 +601,7 @@ foreach ($manual_data as $tab_name => $rows) {
                         <div class="alert alert-warning py-2 px-2 mt-3 mb-0 small">
                             <i class="bi bi-exclamation-triangle me-1"></i>This meter has readings in the meter data but is not registered in Meter Management.
                             <?php if (lum_can('meters', 'edit')): ?>
-                                <a href="https://lynx-um.co.za/Meter Management/Meter Registration/meter-register-form.php" class="alert-link d-block mt-1">Register this meter</a>
+                                <a href="<?php echo htmlspecialchars(lum_app_url('/Meter Management/Meter Registration/meter-register-form.php'), ENT_QUOTES); ?>" class="alert-link d-block mt-1">Register this meter</a>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>

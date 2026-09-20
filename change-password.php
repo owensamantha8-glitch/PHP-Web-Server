@@ -9,7 +9,7 @@
 // =========================================================================
 
 // Shared settings and database connections (errors are logged, never displayed)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
@@ -25,7 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 const LUM_PW_CHANGE_WINDOW = 900; // The new password must be chosen within 15 minutes of logging in
 const LUM_PW_MIN_LENGTH = 8;      // Same minimum as User Management
-const LUM_LOGIN_PAGE = 'https://lynx-um.co.za/Sec/login.php';
+if (!defined('LUM_LOGIN_PAGE')) define('LUM_LOGIN_PAGE', lum_app_url(LUM_LOGIN_PATH));
 
 // Forget the half-finished login and go back to the login page
 function lum_pw_restart($timeout = false) {
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     lum_audit_log('UPDATE', 'user', $uid, $row['user_name'], null,
                                   ['require_password_change' => 1], ['require_password_change' => 0], 'Password changed at first login');
 
-                    header('Location: https://lynx-um.co.za/index.php');
+                    header('Location: ' . lum_app_url('/index.php'));
                     exit();
                 }
             } catch (\Throwable $e) {
@@ -113,7 +113,7 @@ $minutes_left = max(1, (int)ceil((LUM_PW_CHANGE_WINDOW - (time() - $started)) / 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Password - Lynx Utility Management (Pty) Ltd</title>
-    <?php include LUM_ROOT . '/Layout/head-assets.php'; ?>
+    <?php include lum_resolve_path('head-assets.php'); ?>
     <style>
         * { border-radius: 0 !important; }
         body { background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -130,7 +130,7 @@ $minutes_left = max(1, (int)ceil((LUM_PW_CHANGE_WINDOW - (time() - $started)) / 
         <div class="col-12 col-md-8 col-lg-5 col-xl-4">
             <div class="card login-container p-4">
                 <div class="text-center mb-4">
-                    <img src="https://lynx-um.co.za/Additions/Style-Login/LUM-login-logo.png" alt="Lynx Utilities Logo" class="logo-img">
+                    <img src="<?php echo htmlspecialchars(lum_app_url('/Additions/Style-Login/LUM-login-logo.png'), ENT_QUOTES); ?>" alt="Lynx Utilities Logo" class="logo-img">
                 </div>
 
                 <h5 class="text-center mb-2">Choose a new password</h5>
@@ -160,7 +160,7 @@ $minutes_left = max(1, (int)ceil((LUM_PW_CHANGE_WINDOW - (time() - $started)) / 
                         </div>
                     </div>
                     <div class="text-center mt-4 d-flex justify-content-center gap-2">
-                        <a href="https://lynx-um.co.za/Sec/logout.php" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="<?php echo htmlspecialchars(lum_app_url('/Sec/logout.php'), ENT_QUOTES); ?>" class="btn btn-outline-secondary">Cancel</a>
                         <button type="submit" class="btn btn-brand px-4">Save and continue</button>
                     </div>
                 </form>

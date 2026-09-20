@@ -144,7 +144,7 @@ if (!defined('LUM_COMPANY_DEFAULTS')) {
         'company_name'         => 'Lynx Utility Management (Pty) Ltd',
         'company_phone'        => '012 807 2113',
         'company_email'        => 'utilities@lynx-re.co.za',
-        'logo_url'             => 'https://lynx-um.co.za/Additions/Style-index/LUM-login-logo.png',
+        'logo_url'             => lum_app_url('/Additions/Style-index/LUM-login-logo.png'),
         'slip_title'           => 'Consumption Slip',
         'contact_note'         => 'Should you have any concerns regarding {document}, please do not hesitate to contact our offices at {phone}. Alternatively you are welcome to send your concern via email to {email}.',
         'company_address'      => '',

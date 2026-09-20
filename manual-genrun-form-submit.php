@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('manual_readings', 'edit');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -11,14 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     lum_connect('manual'); // $manual_db_conn (bootstrap.php)
-    require_once LUM_ROOT . "/Manual Readings/Manual GenRun Control/manual-genrun-conr.php";
+    $manual_genrun_conr = lum_resolve_path('manual-genrun-conr.php');
+    if ($manual_genrun_conr === false) lum_db_fail('Critical Error: manual genrun controller missing.');
+    require_once $manual_genrun_conr;
 
     $conr = new manual_genrun_conr($manual_db_conn);
 
     $property = trim($_POST['property'] ?? '');
     $reading_date = $_POST['reading_date'] ?? date('Y-m-d');
     $reading_hours = trim($_POST['reading_hours'] ?? '');
-    $overview_url = "https://lynx-um.co.za/Manual%20Readings/manual-genrun-overview.php";
+    $overview_url = lum_app_url('/Manual%20Readings/manual-genrun-overview.php');
 
     // Validate the reading date
     $date_obj = DateTime::createFromFormat('Y-m-d', $reading_date);
@@ -74,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['error_message'] = "Please fill in all required fields.";
     }
 
-    header("Location: https://lynx-um.co.za/Manual%20Readings/manual-genrun-overview.php");
+    header('Location: ' . $overview_url);
     exit();
 } else {
-    header("Location: https://lynx-um.co.za/Manual%20Readings/manual-genrun-overview.php");
+    header('Location: ' . lum_app_url('/Manual%20Readings/manual-genrun-overview.php'));
     exit();
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('tenants', 'view');
 
 lum_connect('tenants', 'obis');
@@ -247,7 +247,7 @@ if (!empty($_SESSION['assigned_properties'])) {
         <div class="container-fluid px-2">
             <div class="row align-items-center">
                 <div class="col-12 col-xl-5 mb-2 mb-xl-0 d-flex align-items-center">
-                    <a href="https://lynx-um.co.za/index.php" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
+                    <a href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
                         Back
                     </a>
                     <h5 class="mb-0 text-white me-3 fs-6">Tenant Overview</h5>

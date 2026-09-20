@@ -20,7 +20,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 // Shared settings, connections and engines (see /var/www/Lynx/bootstrap.php; no login check from the command line)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 ini_set('memory_limit', '2048M');
 set_time_limit(3600);
 
@@ -167,8 +167,8 @@ if ($cron_info_db) {
 }
 
 // The old cache file sat inside the web root (readable by anyone with the address): never written again, always removed
-$cron_old_file = '/var/www/Lynx/Reporting/global_financials.json';
-if (is_file($cron_old_file) && !@unlink($cron_old_file)) {
+$cron_old_file = lum_resolve_path('Reporting/global_financials.json', false);
+if (is_string($cron_old_file) && is_file($cron_old_file) && !@unlink($cron_old_file)) {
     $cron_log('could not delete ' . $cron_old_file . ' - please delete it by hand');
 }
 

@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('meters', 'view');
 
 // Meters and tenants ($meter_db_conn, $meter_crud, $tenant_db_conn, $tenant_crud)
@@ -348,12 +348,12 @@ try {
         <div class="container-fluid px-2">
             <div class="row align-items-center">
                 <div class="col-12 col-xl-5 mb-2 mb-xl-0 d-flex align-items-center">
-                    <a href="https://lynx-um.co.za/index.php" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
+                    <a href="<?php echo htmlspecialchars(lum_app_url('/index.php'), ENT_QUOTES); ?>" class="btn btn-brand btn-sm px-2 shadow-sm me-3">
                         Back
                     </a>
                     <h5 class="mb-0 text-white me-3 fs-6">Meter Overview</h5>
                     <div class="d-flex gap-2 border-start border-secondary ps-3">
-                        <a href="https://lynx-um.co.za/Meter Management/Meter Registration/meter-register-form.php" class="btn btn-brand btn-sm px-2 shadow-sm">
+                        <a href="<?php echo htmlspecialchars(lum_app_url('/Meter Management/Meter Registration/meter-register-form.php'), ENT_QUOTES); ?>" class="btn btn-brand btn-sm px-2 shadow-sm">
                             <i class="bi bi-plus-lg me-1"></i>Register New
                         </a>
                         <a href="meter-health.php" class="btn btn-brand btn-sm px-2 shadow-sm">
@@ -714,7 +714,7 @@ try {
                                         $u_view = 'view-meter.php?' . http_build_query(['serial' => $u_serial, 'kind' => $u['kind']]);
                                         echo "<td class='text-end text-nowrap'>";
                                         if (lum_can('meters', 'edit')) {
-                                            echo "<a href='https://lynx-um.co.za/Meter Management/Meter Registration/meter-register-form.php' class='btn btn-sm btn-outline-warning me-1' title='Register this meter'><i class='bi bi-plus-lg'></i></a>";
+                                            echo "<a href='" . htmlspecialchars(lum_app_url('/Meter Management/Meter Registration/meter-register-form.php'), ENT_QUOTES) . "' class='btn btn-sm btn-outline-warning me-1' title='Register this meter'><i class='bi bi-plus-lg'></i></a>";
                                         }
                                         echo "<a href='" . htmlspecialchars($u_view, ENT_QUOTES) . "' class='btn btn-sm btn-outline-info me-1' title='View Meter Analysis'><i class='bi bi-eye'></i></a>";
                                         echo "</td>";

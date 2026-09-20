@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('consumption_slips', 'view');
 ini_set('memory_limit', '512M'); // Increase memory limit to handle massive arrays
 set_time_limit(300); // Give the script 5 full minutes to crunch the TOU data

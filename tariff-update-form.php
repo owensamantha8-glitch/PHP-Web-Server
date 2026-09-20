@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('tariffs', 'edit');
 // This page does not log deprecation notices and notices (the rest of the error settings come from bootstrap.php)
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);

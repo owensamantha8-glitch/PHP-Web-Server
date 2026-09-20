@@ -1,6 +1,6 @@
 <?php
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('tariffs', 'edit');
 
 lum_connect('tariffs');
@@ -200,11 +200,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    header("Location: https://lynx-um.co.za/Tarrifs/view-tariffs.php?period=" . urlencode($selected_period) . "&tab=" . urlencode($tariff_type));
+    header('Location: ' . lum_app_url('/Tarrifs/view-tariffs.php?period=' . urlencode($selected_period) . '&tab=' . urlencode($tariff_type)));
     exit();
 
 } else {
-    header("Location: https://lynx-um.co.za/Tarrifs/view-tariffs.php");
+    header('Location: ' . lum_app_url('/Tarrifs/view-tariffs.php'));
     exit();
 }
 ?>

@@ -180,8 +180,8 @@ function calculateMarketsquareCommonArea($start_date, $end_date, $obis_code, $ob
 
     // Load the dashboard engine so the slip uses the identical meter-total function
     if (!function_exists('getBulkMeterTotal')) {
-        $dashboard_engine = '/var/www/Lynx/Dashboard functions/dashboard-engine.php';
-        if (!file_exists($dashboard_engine)) return 0;
+        $dashboard_engine = lum_resolve_path('dashboard-engine.php');
+        if ($dashboard_engine === false || !file_exists($dashboard_engine)) return 0;
         require_once $dashboard_engine;
     }
 

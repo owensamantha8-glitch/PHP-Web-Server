@@ -4,7 +4,7 @@
 // slip does it, once the way the bulk export does it - and compares the totals. For a
 // tenant set to separate slips it also checks the two parts add up to the whole.
 // Shared settings, login and page access (see /var/www/Lynx/bootstrap.php)
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_page('consumption_slips', 'view');
 ini_set('pcre.jit', '0');
 set_time_limit(600);
@@ -111,7 +111,7 @@ foreach ($results as $r) {
 
 <?php
 $lum_sub_title = 'Slip Sync Check';
-$lum_sub_back = 'https://lynx-um.co.za/Reporting/financial-reporting-overview.php';
+$lum_sub_back = lum_app_url('/Reporting/financial-reporting-overview.php');
 include LUM_ROOT . '/Layout/sub-navbar.php';
 ?>
 

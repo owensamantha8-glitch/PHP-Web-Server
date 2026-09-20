@@ -1,6 +1,6 @@
 <?php
 // Login page: no login check here.
-require_once '/var/www/Lynx/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 lum_use('audit');
 
 // Session cookie: HTTPS only, not readable by JavaScript, not sent on cross-site requests
@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $update_login->execute();
                         login_audit('LOGIN', $row['user_id'], $row['user_name'], $row['user_role']);
 
-                        header("Location: https://lynx-um.co.za/index.php");
+                        header('Location: ' . lum_app_url('/index.php'));
                         exit();
                     }
                 } else {
@@ -163,7 +163,7 @@ function login_audit($action, $user_id, $user_name, $role = null, $note = null) 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Lynx Utility Management (Pty) Ltd</title>
-    <?php include LUM_ROOT . '/Layout/head-assets.php'; ?>
+    <?php include lum_resolve_path('head-assets.php'); ?>
     <style>
         /* Strict override for completely sharp corners across all elements */
         * { border-radius: 0 !important; }
@@ -185,7 +185,7 @@ function login_audit($action, $user_id, $user_name, $role = null, $note = null) 
             <div class="card login-container p-4">
                 
                 <div class="text-center mb-4">
-                    <img src="https://lynx-um.co.za/Additions/Style-Login/LUM-login-logo.png" alt="Lynx Utilities Logo" class="logo-img">
+                    <img src="<?php echo htmlspecialchars(lum_app_url('/Additions/Style-Login/LUM-login-logo.png'), ENT_QUOTES); ?>" alt="Lynx Utilities Logo" class="logo-img">
                 </div>
 
                 <?php if(!empty($error)): ?>
@@ -220,6 +220,6 @@ function login_audit($action, $user_id, $user_name, $role = null, $note = null) 
         </div>
     </div>
 
-    <?php include LUM_ROOT . '/Layout/foot-assets.php'; ?>
+    <?php include lum_resolve_path('foot-assets.php'); ?>
 </body>
 </html>

@@ -2,11 +2,14 @@
 // Library file: only other pages may include it, it can never be opened directly
 if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) { http_response_code(403); exit('Forbidden'); }
 // Shared consumption slip engine: single slips, bulk slips and the financial report. Load with require_once.
+require_once __DIR__ . '/bootstrap.php';
 
-require_once("/var/www/Lynx/Reporting/reporting-engine.php");
+$reporting_engine = lum_resolve_path('reporting-engine.php');
+if ($reporting_engine === false) lum_db_fail('Critical Error: reporting engine missing.');
+require_once $reporting_engine;
 
 if (!defined('LUM_SLIP_DIR')) {
-    define('LUM_SLIP_DIR', '/var/www/Lynx/Tenant Management/Tenant Consumption Slips');
+    define('LUM_SLIP_DIR', LUM_ROOT);
 }
 
 // The CT switch-over helpers (lumDetectMeterCtStep, lumRegisterAt, ...) live in reporting-engine.php
@@ -18,9 +21,9 @@ function lumDbConn($db_name) {
     if (array_key_exists($db_name, $conns)) return $conns[$db_name];
     $conns[$db_name] = null;
 
-    $config = @parse_ini_file('/var/secure_configs/lynx_db.ini');
-    if ($config === false || empty($config['host']) || !isset($config['username'], $config['password'])) {
-        error_log('LUM slip engine: unable to read /var/secure_configs/lynx_db.ini');
+    $config = lum_db_config();
+    if ($config === null || empty($config['host']) || !isset($config['username'], $config['password'])) {
+        error_log('LUM slip engine: unable to read ' . LUM_DB_CONFIG);
         return null;
     }
 
