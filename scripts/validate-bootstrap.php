@@ -10,6 +10,20 @@ putenv('LUM_LOGIN_PATH=/Sec/login.php');
 require $root . '/bootstrap.php';
 require $root . '/financial-journal-engine.php';
 
+$appUrlCheck = static function ($baseUrl, $path, $expected) use ($root) {
+    $cmd = 'LUM_APP_ROOT=' . escapeshellarg($root)
+        . ' LUM_APP_URL=' . escapeshellarg($baseUrl)
+        . ' php -r '
+        . escapeshellarg('require ' . var_export($root . '/bootstrap.php', true) . '; echo lum_app_url(' . var_export($path, true) . ');');
+    $output = [];
+    $code = 0;
+    exec($cmd, $output, $code);
+    if ($code !== 0 || implode("\n", $output) !== $expected) {
+        fwrite(STDERR, "lum_app_url() did not normalize {$baseUrl} and {$path} as expected.\n");
+        exit(1);
+    }
+};
+
 $bootstrap = $root . '/bootstrap.php';
 $resolved = lum_resolve_path('/bootstrap.php');
 if ($resolved === false || realpath($resolved) !== realpath($bootstrap)) {
@@ -46,5 +60,8 @@ if (!function_exists('lumJournalDb')) {
     fwrite(STDERR, "financial-journal-engine.php did not load correctly through bootstrap-dependent validation.\n");
     exit(1);
 }
+
+$appUrlCheck('https://example.test/', '/index.php', 'https://example.test/index.php');
+$appUrlCheck('https://example.test/base', '/index.php', 'https://example.test/base/index.php');
 
 echo "Bootstrap validation passed.\n";
