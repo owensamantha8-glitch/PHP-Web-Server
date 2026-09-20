@@ -103,7 +103,7 @@ function lum_deny($message = 'You do not have access to this page.') {
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Access Denied</title></head>"
        . "<body style='background:#121212; color:#fff; font-family:Segoe UI, sans-serif; padding:40px;'>"
        . "<h3 style='color:#e3000f;'>Access Denied</h3><p>" . htmlspecialchars($message) . "</p>"
-       . "<p><a href='https://lynx-um.co.za/index.php' style='color:#0dcaf0;'>Return to the dashboard</a></p></body></html>";
+       . "<p><a href='" . htmlspecialchars(rtrim(LUM_APP_URL, '/')) . "/index.php' style='color:#0dcaf0;'>Return to the dashboard</a></p></body></html>";
     exit();
 }
 

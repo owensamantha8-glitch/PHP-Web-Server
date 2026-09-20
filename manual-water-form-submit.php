@@ -4,7 +4,6 @@ require_once __DIR__ . '/bootstrap.php';
 lum_page('manual_readings', 'edit');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
     // --- VALIDATE CSRF TOKEN ---
     if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', (string)$_POST['csrf_token'])) {
         die("<div style='color:white; background:red; padding:20px; font-family:sans-serif;'>Security Error: Invalid CSRF Token. Request Blocked.</div>");
@@ -15,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $manual_reading_crud = new manual_water_conr($manual_db_conn);
 
-    $overview_url = "https://lynx-um.co.za/Manual%20Readings/manual-water-overview.php";
+    $overview_url = rtrim(LUM_APP_URL, '/') . '/Manual%20Readings/manual-water-overview.php';
 
     $property = trim($_POST['property'] ?? '');
     $reading_date = $_POST['reading_date'] ?? date('Y-m-d');
@@ -38,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Only meters that belong to this property's tenants are accepted; tenant and shop come from the database
     $valid_meters = [];
     $stmt_m = $tenant_db_conn->prepare("SELECT tenant_name, tenant_shop, tenant_waterMeter_01, tenant_waterMeter_02, tenant_waterMeter_03, tenant_waterMeter_04 FROM lum_tenants WHERE tenant_property = :prop");
     $stmt_m->execute(['prop' => $property]);
@@ -55,21 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: " . $overview_url);
         exit();
     }
-    
-    // "Allow unusual readings" lets a reading through that is lower than the previous one,
-    // or far higher than this meter normally moves. Duplicates are never allowed.
-    $allow_unusual = isset($_POST['allow_unusual']);
 
-    // Extract array data directly from the dynamic bulk-submission form
+    $allow_unusual = isset($_POST['allow_unusual']);
     $tenants = $_POST['tenants'] ?? [];
     $shops = $_POST['shops'] ?? [];
     $serials = $_POST['serials'] ?? [];
     $readings = $_POST['readings'] ?? [];
 
     $added_count = 0;
-    $refused = [];   // readings the checks stopped, with the reason
+    $refused = [];
 
-    // The last reading before this date, and the first one after it, per meter
     $stmt_before = $manual_db_conn->prepare(
         "SELECT reading, reading_date FROM manual_readings_water
           WHERE water_serial = :serial AND reading_date <= :d
@@ -81,29 +74,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt_same = $manual_db_conn->prepare(
         "SELECT reading FROM manual_readings_water
           WHERE water_serial = :serial AND reading_date = :d LIMIT 1");
-    // How much this meter usually moves in a month, from its own history
     $stmt_pace = $manual_db_conn->prepare(
         "SELECT (MAX(reading) - MIN(reading)) / GREATEST(DATEDIFF(MAX(reading_date), MIN(reading_date)), 1) * 30 AS monthly
            FROM manual_readings_water WHERE water_serial = :serial");
 
     for ($i = 0; $i < count($serials); $i++) {
         $reading_val = trim($readings[$i] ?? '');
-        
-        // Skip entry entirely if the input is left blank (allowing single submissions from the list)
+
         if ($reading_val !== '') {
             $water_serial = trim($serials[$i] ?? '');
             if (!is_numeric($reading_val) || !isset($valid_meters[$water_serial])) {
-                continue; // Not a number, or not a meter of this property
+                continue;
             }
             $tenant = $valid_meters[$water_serial]['tenant'];
             $shop = $valid_meters[$water_serial]['shop'];
             $reading = floatval($reading_val);
-            
+
             if (!empty($water_serial)) {
                 $label = $tenant . ' (' . $water_serial . ')';
 
-                // A reading for this meter and date already exists: always refused, to avoid
-                // two readings for the same day (edit the existing one instead).
                 $stmt_same->execute(['serial' => $water_serial, 'd' => $reading_date]);
                 $same = $stmt_same->fetch(PDO::FETCH_ASSOC);
                 if ($same) {
@@ -134,8 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt_pace->execute(['serial' => $water_serial]);
                     $pace = (float)($stmt_pace->fetchColumn() ?: 0);
                     $expected = $pace > 0 ? $pace * ($days / 30) : 0;
-                    // Only question it when the jump is large in itself as well, so small meters
-                    // with little history do not trip the check.
                     if ($expected > 0 && $used > $expected * 5 && $used > 20) {
                         $refused[] = $label . ': ' . round($used, 3) . ' kl over ' . $days . ' day(s) is far above the '
                                    . round($expected, 3) . ' kl this meter normally uses - tick "allow unusual readings" if it is correct';
@@ -160,10 +147,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['error_message'] = "These readings were not added: " . implode(' | ', $refused);
     }
 
-    header("Location: https://lynx-um.co.za/Manual%20Readings/manual-water-overview.php");
+    header("Location: " . $overview_url);
     exit();
 } else {
-    header("Location: https://lynx-um.co.za/Manual%20Readings/manual-water-overview.php");
+    header("Location: " . rtrim(LUM_APP_URL, '/') . '/Manual%20Readings/manual-water-overview.php');
     exit();
 }
 ?>
