@@ -11,7 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     lum_connect('manual', 'tenants'); // $manual_db_conn, $tenant_db_conn (bootstrap.php)
-    require_once lum_resolve_path('/manual-water-conr.php');
+    $manual_water_conr = lum_resolve_path('manual-water-conr.php');
+    if ($manual_water_conr === false) lum_db_fail('Critical Error: manual water controller missing.');
+    require_once $manual_water_conr;
 
     $manual_reading_crud = new manual_water_conr($manual_db_conn);
 

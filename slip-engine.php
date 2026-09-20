@@ -4,7 +4,9 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) 
 // Shared consumption slip engine: single slips, bulk slips and the financial report. Load with require_once.
 require_once __DIR__ . '/bootstrap.php';
 
-require_once lum_resolve_path('/reporting-engine.php');
+$reporting_engine = lum_resolve_path('reporting-engine.php');
+if ($reporting_engine === false) lum_db_fail('Critical Error: reporting engine missing.');
+require_once $reporting_engine;
 
 if (!defined('LUM_SLIP_DIR')) {
     define('LUM_SLIP_DIR', LUM_ROOT);

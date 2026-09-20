@@ -113,7 +113,7 @@ $minutes_left = max(1, (int)ceil((LUM_PW_CHANGE_WINDOW - (time() - $started)) / 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Password - Lynx Utility Management (Pty) Ltd</title>
-    <?php include lum_resolve_path('/head-assets.php'); ?>
+    <?php include lum_resolve_path('head-assets.php'); ?>
     <style>
         * { border-radius: 0 !important; }
         body { background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }

@@ -17,5 +17,7 @@ $host = $config['host'];
 
 $tenant_db_conn = lum_db('tenants', true);
 
-require_once lum_resolve_path('/tenant-conr.php');
+$tenant_conr = lum_resolve_path('tenant-conr.php');
+if ($tenant_conr === false) lum_db_fail('Critical Error: tenant controller missing.');
+require_once $tenant_conr;
 $tenant_crud = new tenant_conr($tenant_db_conn);

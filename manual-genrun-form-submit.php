@@ -11,7 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     lum_connect('manual'); // $manual_db_conn (bootstrap.php)
-    require_once lum_resolve_path('/manual-genrun-conr.php');
+    $manual_genrun_conr = lum_resolve_path('manual-genrun-conr.php');
+    if ($manual_genrun_conr === false) lum_db_fail('Critical Error: manual genrun controller missing.');
+    require_once $manual_genrun_conr;
 
     $conr = new manual_genrun_conr($manual_db_conn);
 

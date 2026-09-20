@@ -52,14 +52,14 @@ const LUM_DB_GLOBALS = [
 
 // Shared engines (lum_use) => file below LUM_ROOT
 const LUM_LIBRARIES = [
-    'audit'        => '/Audit/audit-logger.php',
-    'reporting'    => '/reporting-engine.php',
-    'slips'        => '/slip-engine.php',
-    'journal'      => '/financial-journal-engine.php',
-    'back_billing' => '/back-billing-engine.php',
-    'tenant_forms' => '/tenant-form-options.php',
-    'meters'       => '/meter-conr.php',
-    'tenants'      => '/tenant-conr.php',
+    'audit'        => 'audit-logger.php',
+    'reporting'    => 'reporting-engine.php',
+    'slips'        => 'slip-engine.php',
+    'journal'      => 'financial-journal-engine.php',
+    'back_billing' => 'back-billing-engine.php',
+    'tenant_forms' => 'tenant-form-options.php',
+    'meters'       => 'meter-conr.php',
+    'tenants'      => 'tenant-conr.php',
 ];
 
 ini_set('display_errors', 0);
@@ -99,7 +99,7 @@ function lum_resolve_path($path, $must_exist = true) {
         if ($path === $root) return $root;
         if (strpos($path, $root . '/') === 0) {
             $path = substr($path, strlen($root) + 1);
-        } elseif ($must_exist === false) {
+        } else {
             return false;
         }
     }
@@ -262,7 +262,7 @@ function lum_audit_stubs() {
 
 // Login and page access for web pages; command-line (cron) scripts are not checked
 function lum_page($page_key = null, $level = 'view') {
-    $auth_guard = lum_resolve_path('/auth-guard.php');
+    $auth_guard = lum_resolve_path('auth-guard.php');
     if ($auth_guard === false) lum_db_fail('Critical Error: auth guard missing.');
     require_once $auth_guard;
     if (PHP_SAPI === 'cli') return;

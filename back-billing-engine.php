@@ -367,7 +367,9 @@ if (!defined('LUM_BACKBILL_ENGINE')) {
     // Returns ['totals', 'billing', 'period', 'tariffs', 'obis', 'seasons'] - the corrected bill.
     function lumAdjRecalculate(array $line, array $tenant_row, array $c) {
         global $tenant_db_conn, $obis_db_conn, $manual_db_conn, $tariff_db_conn;
-        require_once lum_resolve_path('/slip-engine.php');
+        $slip_engine = lum_resolve_path('slip-engine.php');
+        if ($slip_engine === false) lum_db_fail('Critical Error: slip engine missing.');
+        require_once $slip_engine;
 
         // 1. The report exactly as it was journaled ...
         $req = json_decode((string)($line['j_report_settings'] ?? ''), true);

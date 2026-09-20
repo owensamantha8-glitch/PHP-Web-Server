@@ -163,7 +163,7 @@ function login_audit($action, $user_id, $user_name, $role = null, $note = null) 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Lynx Utility Management (Pty) Ltd</title>
-    <?php include lum_resolve_path('/head-assets.php'); ?>
+    <?php include lum_resolve_path('head-assets.php'); ?>
     <style>
         /* Strict override for completely sharp corners across all elements */
         * { border-radius: 0 !important; }
@@ -220,6 +220,6 @@ function login_audit($action, $user_id, $user_name, $role = null, $note = null) 
         </div>
     </div>
 
-    <?php include lum_resolve_path('/foot-assets.php'); ?>
+    <?php include lum_resolve_path('foot-assets.php'); ?>
 </body>
 </html>

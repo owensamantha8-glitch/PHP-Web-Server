@@ -13,6 +13,7 @@ require $root . '/financial-journal-engine.php';
 $appUrlCheck = static function ($baseUrl, $path, $expected) use ($root) {
     $cmd = 'LUM_APP_ROOT=' . escapeshellarg($root)
         . ' LUM_APP_URL=' . escapeshellarg($baseUrl)
+        . ' LUM_LOGIN_PATH=' . escapeshellarg('/Sec/login.php')
         . ' php -r '
         . escapeshellarg('require ' . var_export($root . '/bootstrap.php', true) . '; echo lum_app_url(' . var_export($path, true) . ');');
     $output = [];
@@ -25,7 +26,7 @@ $appUrlCheck = static function ($baseUrl, $path, $expected) use ($root) {
 };
 
 $bootstrap = $root . '/bootstrap.php';
-$resolved = lum_resolve_path('/bootstrap.php');
+$resolved = lum_resolve_path('bootstrap.php');
 if ($resolved === false || realpath($resolved) !== realpath($bootstrap)) {
     fwrite(STDERR, "lum_resolve_path() did not resolve bootstrap.php within the app root.\n");
     exit(1);
@@ -38,7 +39,7 @@ foreach (['../bootstrap.php', '/../../etc/passwd', '..\\bootstrap.php'] as $bad)
     }
 }
 
-if (lum_resolve_path('/missing/bootstrap.php') !== false) {
+if (lum_resolve_path('missing/bootstrap.php') !== false) {
     fwrite(STDERR, "lum_resolve_path() incorrectly fell back from a missing nested path.\n");
     exit(1);
 }

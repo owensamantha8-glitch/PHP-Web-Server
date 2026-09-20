@@ -17,5 +17,7 @@ $host = $config['host'];
 
 $meter_db_conn = lum_db('meters', true);
 
-require_once lum_resolve_path('/meter-conr.php');
+$meter_conr = lum_resolve_path('meter-conr.php');
+if ($meter_conr === false) lum_db_fail('Critical Error: meter controller missing.');
+require_once $meter_conr;
 $meter_crud = new meter_conr($meter_db_conn);
